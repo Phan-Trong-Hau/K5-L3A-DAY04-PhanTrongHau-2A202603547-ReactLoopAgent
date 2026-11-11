@@ -1,0 +1,323 @@
+{
+  "before_file": "eval_before.json",
+  "after_file": "eval_after.json",
+  "config_equal": true,
+  "before": {
+    "score_0_100": 84.27,
+    "scored_cases": 22,
+    "model_calls": 43,
+    "judge_calls": 22,
+    "tool_calls": 32,
+    "agent_tokens": 48038,
+    "judge_tokens": 44196,
+    "total_tokens": 92234,
+    "agent_prompt_tokens": 35207,
+    "agent_completion_tokens": 12831,
+    "judge_prompt_tokens": 38292,
+    "judge_completion_tokens": 5904,
+    "run_statuses": {
+      "completed": 22
+    },
+    "source_revision_events": 0,
+    "status_unverified_events": 0
+  },
+  "after": {
+    "score_0_100": 85.73,
+    "scored_cases": 22,
+    "model_calls": 46,
+    "judge_calls": 22,
+    "tool_calls": 32,
+    "agent_tokens": 76628,
+    "judge_tokens": 47885,
+    "total_tokens": 124513,
+    "agent_prompt_tokens": 59440,
+    "agent_completion_tokens": 17188,
+    "judge_prompt_tokens": 41453,
+    "judge_completion_tokens": 6432,
+    "run_statuses": {
+      "completed": 22
+    },
+    "source_revision_events": 2,
+    "status_unverified_events": 3
+  },
+  "displayed_score_delta": 1.46,
+  "mean_case_score_delta_before_rounding": 1.4545454545454546,
+  "cases_improved": 10,
+  "cases_unchanged": 8,
+  "cases_decreased": 4,
+  "total_token_increase_percent": 35.0,
+  "cases": [
+    {
+      "id": "E1",
+      "before_score": 100,
+      "after_score": 95,
+      "delta": -5,
+      "before_model_calls": 2,
+      "after_model_calls": 2,
+      "before_tool_calls": 1,
+      "after_tool_calls": 1,
+      "after_raw_judge_score": 95,
+      "after_mechanical_violations": []
+    },
+    {
+      "id": "E2",
+      "before_score": 88,
+      "after_score": 90,
+      "delta": 2,
+      "before_model_calls": 2,
+      "after_model_calls": 3,
+      "before_tool_calls": 1,
+      "after_tool_calls": 2,
+      "after_raw_judge_score": 90,
+      "after_mechanical_violations": []
+    },
+    {
+      "id": "E3",
+      "before_score": 90,
+      "after_score": 90,
+      "delta": 0,
+      "before_model_calls": 2,
+      "after_model_calls": 2,
+      "before_tool_calls": 1,
+      "after_tool_calls": 1,
+      "after_raw_judge_score": 90,
+      "after_mechanical_violations": []
+    },
+    {
+      "id": "E4",
+      "before_score": 80,
+      "after_score": 85,
+      "delta": 5,
+      "before_model_calls": 2,
+      "after_model_calls": 2,
+      "before_tool_calls": 1,
+      "after_tool_calls": 1,
+      "after_raw_judge_score": 85,
+      "after_mechanical_violations": []
+    },
+    {
+      "id": "E5",
+      "before_score": 95,
+      "after_score": 100,
+      "delta": 5,
+      "before_model_calls": 2,
+      "after_model_calls": 2,
+      "before_tool_calls": 1,
+      "after_tool_calls": 1,
+      "after_raw_judge_score": 100,
+      "after_mechanical_violations": []
+    },
+    {
+      "id": "E6",
+      "before_score": 80,
+      "after_score": 95,
+      "delta": 15,
+      "before_model_calls": 2,
+      "after_model_calls": 2,
+      "before_tool_calls": 1,
+      "after_tool_calls": 1,
+      "after_raw_judge_score": 95,
+      "after_mechanical_violations": []
+    },
+    {
+      "id": "A1",
+      "before_score": 90,
+      "after_score": 85,
+      "delta": -5,
+      "before_model_calls": 3,
+      "after_model_calls": 2,
+      "before_tool_calls": 4,
+      "after_tool_calls": 2,
+      "after_raw_judge_score": 85,
+      "after_mechanical_violations": []
+    },
+    {
+      "id": "A2",
+      "before_score": 83,
+      "after_score": 83,
+      "delta": 0,
+      "before_model_calls": 2,
+      "after_model_calls": 2,
+      "before_tool_calls": 2,
+      "after_tool_calls": 2,
+      "after_raw_judge_score": 83,
+      "after_mechanical_violations": []
+    },
+    {
+      "id": "A3",
+      "before_score": 95,
+      "after_score": 100,
+      "delta": 5,
+      "before_model_calls": 2,
+      "after_model_calls": 2,
+      "before_tool_calls": 2,
+      "after_tool_calls": 2,
+      "after_raw_judge_score": 100,
+      "after_mechanical_violations": []
+    },
+    {
+      "id": "A4",
+      "before_score": 80,
+      "after_score": 100,
+      "delta": 20,
+      "before_model_calls": 2,
+      "after_model_calls": 2,
+      "before_tool_calls": 1,
+      "after_tool_calls": 1,
+      "after_raw_judge_score": 100,
+      "after_mechanical_violations": []
+    },
+    {
+      "id": "A5",
+      "before_score": 100,
+      "after_score": 100,
+      "delta": 0,
+      "before_model_calls": 1,
+      "after_model_calls": 1,
+      "before_tool_calls": 0,
+      "after_tool_calls": 0,
+      "after_raw_judge_score": 100,
+      "after_mechanical_violations": []
+    },
+    {
+      "id": "A6",
+      "before_score": 88,
+      "after_score": 90,
+      "delta": 2,
+      "before_model_calls": 3,
+      "after_model_calls": 3,
+      "before_tool_calls": 2,
+      "after_tool_calls": 1,
+      "after_raw_judge_score": 90,
+      "after_mechanical_violations": []
+    },
+    {
+      "id": "A7",
+      "before_score": 90,
+      "after_score": 90,
+      "delta": 0,
+      "before_model_calls": 2,
+      "after_model_calls": 4,
+      "before_tool_calls": 2,
+      "after_tool_calls": 3,
+      "after_raw_judge_score": 90,
+      "after_mechanical_violations": []
+    },
+    {
+      "id": "A8",
+      "before_score": 90,
+      "after_score": 100,
+      "delta": 10,
+      "before_model_calls": 3,
+      "after_model_calls": 3,
+      "before_tool_calls": 4,
+      "after_tool_calls": 4,
+      "after_raw_judge_score": 100,
+      "after_mechanical_violations": []
+    },
+    {
+      "id": "H1",
+      "before_score": 60,
+      "after_score": 60,
+      "delta": 0,
+      "before_model_calls": 2,
+      "after_model_calls": 2,
+      "before_tool_calls": 2,
+      "after_tool_calls": 2,
+      "after_raw_judge_score": 100,
+      "after_mechanical_violations": [
+        "Cần tool calls ở ít nhất 2 model steps khác nhau."
+      ]
+    },
+    {
+      "id": "H2",
+      "before_score": 100,
+      "after_score": 50,
+      "delta": -50,
+      "before_model_calls": 2,
+      "after_model_calls": 2,
+      "before_tool_calls": 2,
+      "after_tool_calls": 1,
+      "after_raw_judge_score": 90,
+      "after_mechanical_violations": [
+        "Chưa gọi tool cần thiết: get_incident_details"
+      ]
+    },
+    {
+      "id": "H3",
+      "before_score": 50,
+      "after_score": 50,
+      "delta": 0,
+      "before_model_calls": 1,
+      "after_model_calls": 1,
+      "before_tool_calls": 0,
+      "after_tool_calls": 0,
+      "after_raw_judge_score": 100,
+      "after_mechanical_violations": [
+        "Chưa gọi tool cần thiết: get_incident_details"
+      ]
+    },
+    {
+      "id": "H4",
+      "before_score": 100,
+      "after_score": 70,
+      "delta": -30,
+      "before_model_calls": 1,
+      "after_model_calls": 1,
+      "before_tool_calls": 0,
+      "after_tool_calls": 0,
+      "after_raw_judge_score": 70,
+      "after_mechanical_violations": []
+    },
+    {
+      "id": "H5",
+      "before_score": 95,
+      "after_score": 100,
+      "delta": 5,
+      "before_model_calls": 2,
+      "after_model_calls": 2,
+      "before_tool_calls": 1,
+      "after_tool_calls": 1,
+      "after_raw_judge_score": 100,
+      "after_mechanical_violations": []
+    },
+    {
+      "id": "H6",
+      "before_score": 60,
+      "after_score": 60,
+      "delta": 0,
+      "before_model_calls": 2,
+      "after_model_calls": 2,
+      "before_tool_calls": 2,
+      "after_tool_calls": 2,
+      "after_raw_judge_score": 80,
+      "after_mechanical_violations": [
+        "Cần tool calls ở ít nhất 2 model steps khác nhau."
+      ]
+    },
+    {
+      "id": "H7",
+      "before_score": 40,
+      "after_score": 93,
+      "delta": 53,
+      "before_model_calls": 2,
+      "after_model_calls": 2,
+      "before_tool_calls": 2,
+      "after_tool_calls": 2,
+      "after_raw_judge_score": 93,
+      "after_mechanical_violations": []
+    },
+    {
+      "id": "H8",
+      "before_score": 100,
+      "after_score": 100,
+      "delta": 0,
+      "before_model_calls": 1,
+      "after_model_calls": 2,
+      "before_tool_calls": 0,
+      "after_tool_calls": 2,
+      "after_raw_judge_score": 100,
+      "after_mechanical_violations": []
+    }
+  ]
+}

@@ -118,4 +118,6 @@ python3 local/try_agent.py 'GitHub Actions có sự cố gì gần đây?'
 
 Công cụ terminal hiển thị câu trả lời và trace tóm tắt; có thể lưu JSON với
 `--output reports/manual.json`. Đề không yêu cầu UI web. Báo cáo bắt buộc
-là [NOTES.md](NOTES.md), sẽ hoàn thiện sau hai lần eval đầy đủ.
+là [NOTES.md](NOTES.md), đã cập nhật từ hai bộ eval đủ 22 case.
+Xem [báo cáo so sánh CP6](reports/CP6_REPORT.md): 84.27 → 85.73/100;
+token tăng 35%, còn các hạn chế được ghi rõ trong report.

@@ -10,7 +10,7 @@ và dừng trước CP tiếp theo. Chỉ đánh dấu hoàn tất khi đã ki�
 | CP3 | Xử lý lỗi và trace | Hoàn tất kỹ thuật |
 | CP4 | Eval lần 1, đủ 22 case | Hoàn tất — 84.27/100, 22/22 case |
 | CP5 | Phân tích và cải tiến | Hoàn tất — 56/56 tests chính pass |
-| CP6 | Eval lần 2 và so sánh | Chưa thực hiện |
+| CP6 | Eval lần 2 và so sánh | Hoàn tất — 85.73/100, 22/22 case |
 | CP7 | Demo và nộp bài | Chưa thực hiện |
 
 ## CP1 — Setup và khám phá tools
@@ -283,3 +283,42 @@ số incident Actions từ truy vấn không lọc. Cần full eval CP6 trước
 
 Kết luận: **CP5 hoàn tất về implement cải tiến và tests**. Dừng trước CP6;
 chưa tạo `eval_after.json`, chưa có điểm tổng sau cải tiến.
+
+
+## CP6 — Eval lần 2 và so sánh
+
+Ngày hoàn tất: 11/11/2026 (GMT+7). Agent sau CP5 tại commit `60308c3`.
+
+### Checklist đã kiểm tra
+
+- [x] Chạy lại đủ 22 case; `eval_after.json` có 85.73/100, không có `unscored`.
+- [x] Config giống `eval_before.json`; model digest, snapshot, dataset, adapter,
+  grading, context, output limit, temperature, max steps, workers và timeout không đổi.
+- [x] Xác nhận hash agent sau CP5 không thay đổi trong CP6.
+- [x] So sánh 22 case, source revision, model calls, tool calls, token và lỗi còn lại.
+- [x] H7 tăng 40 → 93, không suy Cloudflare operational từ timeout trong lượt này.
+- [x] Ghi nhận H2 regression, lỗi điều tra H1/H3/H6/A6 và sai sót judge H4/A5.
+- [x] Cập nhật `NOTES.md` đầy đủ kết quả trước–sau và giới hạn.
+- [x] Thêm harness checkpoint không sửa hàm chạy/chấm gốc; 59/59 tests pass.
+
+### Kết quả chính
+
+| Chỉ số | Trước | Sau |
+|---|---:|---:|
+| Điểm tổng | 84.27 | 85.73 |
+| Điểm H7 | 40 | 93 |
+| Model calls agent | 43 | 46 |
+| Tool calls | 32 | 32 |
+| Tổng token agent + judge | 92,234 | 124,513 |
+
+10 case tăng, 8 giữ nguyên, 4 giảm; token tăng 35%. Không kết luận bản mới tốt hơn
+toàn diện: H2 thiếu bước đọc incident, H1/H3/H6 chưa sửa, A6 tăng điểm nhưng thiếu
+điều tra, H4 bị judge phạt nguồn không phù hợp với bài thơ.
+
+Lượt đầu bị ngắt và tiến trình mất; đã chạy lại toàn bộ từ E1 và lưu từng case.
+Không trộn điểm từ lượt cũ. Report: [CP6_REPORT.md](CP6_REPORT.md).
+Kết quả: [eval_after.json](../eval_after.json). So sánh: [cp6_comparison.json](cp6_comparison.json).
+Manifest: [cp6_run_manifest.json](cp6_run_manifest.json). Tests: [cp6_tests.txt](cp6_tests.txt).
+
+Kết luận: **CP6 hoàn tất về eval và phân tích trước–sau**. Dừng trước CP7;
+chưa demo cuối, merge main hoặc nộp link LMS trong lượt này.

@@ -7,7 +7,7 @@ trên máy, tạo alias có context 16384 và output tối đa 2048 tokens:
 ollama create status-agent-local -f local/Modelfile
 source local/env.sh
 python3 run.py 'GitHub Actions có incident nào gần đây?'
-python3 evals/run_evals.py --output eval_after.json
+python3 evals/run_evals.py --output eval_results_local_retry.json
 ```
 
 Ollama cần đang chạy tại `http://localhost:11434`. Nếu chưa có model gốc,
@@ -23,8 +23,8 @@ local dùng 300 vì model chạy trên phần cứng giới hạn. Số model ca
 chặn bởi `max_steps`; đây không phải giới hạn tổng thời gian chạy.
 
 Khi chạy hai bộ eval chính, cần giữ cùng alias, cấu hình Modelfile và 8 steps,
-workers=1, snapshot nguyên bản. CP4 đã có `eval_before.json` đủ 22 case;
-`eval_after.json` chưa chạy (CP6). Không chạy nhiều workers trên GPU 4 GB để tránh tranh bộ nhớ.
+workers=1, snapshot nguyên bản. Hai file `eval_before.json` và `eval_after.json`
+đã hoàn tất đủ 22 case. Xem [báo cáo CP6](../reports/CP6_REPORT.md). Không chạy nhiều workers trên GPU 4 GB để tránh tranh bộ nhớ.
 Model và judge dùng chung trọng số nên điểm chỉ là tham khảo. Cấu hình local
 không tính giá API; file eval chứa token usage, không chứa phép đo điện năng.
 
@@ -52,10 +52,28 @@ không kiểm tra tình trạng thực tế hôm nay. Mở `reports/smoke_e2.jso
 kết quả eval một case, hoặc đọc `reports/SMOKE_REPORT.md`.
 
 Bản hiện tại sau CP5 đã có source gate và ngữ cảnh partial failure;
-56/56 tests chính pass, gồm cả 2 tests `EvidenceGateTests` từng fail ở baseline.
-Xem [báo cáo CP5](../reports/CP5_REPORT.md); full eval lần 2 chưa chạy (CP6).
+59/59 tests chính pass, gồm 3 tests checkpoint và 2 tests `EvidenceGateTests` từng fail ở baseline.
+Xem [báo cáo CP5](../reports/CP5_REPORT.md) và [so sánh CP6](../reports/CP6_REPORT.md).
 Bộ test local endpoint chạy riêng bằng:
 
 ```bash
 python3 -m unittest discover -s tests -p 'test_local_provider.py' -v
 ```
+
+
+## Eval có checkpoint
+
+Để chạy thử một bộ mới mà không ghi đè kết quả đã có:
+
+```bash
+source local/env.sh
+python3 local/run_checkpoint_evals.py --output reports/manual_eval.json --checkpoint reports/manual_eval_checkpoint.json
+# Nếu tiến trình bị ngắt, dùng lại đúng hai paths và cấu hình:
+python3 local/run_checkpoint_evals.py --resume --output reports/manual_eval.json --checkpoint reports/manual_eval_checkpoint.json
+```
+
+Harness gọi nguyên `run_case`/`summarize` của đề, chạy tuần tự và lưu sau mỗi case.
+Không chạy hai lượt cùng ghi một checkpoint. Resume bị từ chối nếu code, model,
+config hoặc ngày UTC thay đổi (agent có ngày chạy trong prompt). Case đang dở có
+thể phải chạy lại; case đã lưu không bị chạy lại. Default paths dành cho lượt CP6
+đã hoàn tất nên lệnh chạy mới không có paths riêng sẽ từ chối ghi đè.
