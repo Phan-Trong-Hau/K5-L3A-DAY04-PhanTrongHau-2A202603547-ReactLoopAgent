@@ -43,3 +43,5 @@ Vì vậy cần tự đọc evidence, không chỉ nhìn điểm 83.
 - `reports/smoke_e2.json`: answer, trace, usage và đánh giá gốc.
 - `local/README.md`: lệnh chạy thử câu hỏi khác.
 - `NOTES.md`: ghi chú phân tích đang thực hiện; chưa đủ điều kiện nộp bài hoàn chỉnh.
+
+Tiến độ theo checkpoint được cập nhật tại [PROGRESS.md](PROGRESS.md).

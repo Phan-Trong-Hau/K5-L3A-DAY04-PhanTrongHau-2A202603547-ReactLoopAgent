@@ -1,0 +1,99 @@
+{
+  "python": "3.12.3",
+  "mode": "snapshot",
+  "model_available": true,
+  "checks": [
+    {
+      "tool": "get_status",
+      "arguments": {
+        "provider": "github",
+        "component": "Actions"
+      },
+      "result": {
+        "provider": "github",
+        "captured_at": "2026-11-09T03:50:47.065020+00:00",
+        "overall": {
+          "indicator": "none",
+          "description": "All Systems Operational"
+        },
+        "components": [
+          {
+            "name": "Actions",
+            "status": "operational"
+          }
+        ],
+        "incidents": [
+          {
+            "id": "pfbmpxxfq1cy",
+            "name": "Degraded performance for multiple GitHub services",
+            "status": "resolved",
+            "updated_at": "2026-11-06T00:20:49.369Z"
+          },
+          {
+            "id": "t89g2q1800fr",
+            "name": "Incident with Actions",
+            "status": "resolved",
+            "updated_at": "2026-11-05T17:42:35.455Z"
+          },
+          {
+            "id": "h02n9572mx9y",
+            "name": "Incident with Actions",
+            "status": "resolved",
+            "updated_at": "2026-11-07T01:10:18.506Z"
+          },
+          {
+            "id": "xr3myzj7ms51",
+            "name": "Incident with Actions and Pages",
+            "status": "resolved",
+            "updated_at": "2026-11-07T01:04:38.647Z"
+          },
+          {
+            "id": "smtdswd1h2w4",
+            "name": "Incident with Pull Requests, Git Operations and Issues",
+            "status": "resolved",
+            "updated_at": "2026-11-04T11:50:06.459Z"
+          }
+        ],
+        "matching_incidents_in_last_50": 23,
+        "note": "Chỉ tìm theo chuỗi trong 50 incident gần nhất; không tìm thấy không chứng minh không có sự cố.",
+        "source": "https://www.githubstatus.com"
+      }
+    },
+    {
+      "tool": "get_incident_details",
+      "arguments": {
+        "provider": "cloudflare",
+        "incident_id": "wp49bp8bqo6c"
+      },
+      "result": {
+        "ok": true,
+        "provider": "cloudflare",
+        "captured_at": "2026-11-09T03:50:47.638054+00:00",
+        "id": "wp49bp8bqo6c",
+        "name": "Fedramp Customers have Delayed Purges",
+        "status": "identified",
+        "created_at": "2026-11-06T17:47:15.545Z",
+        "updated_at": "2026-11-06T17:59:13.680Z",
+        "components": [
+          "CDN Cache Purge"
+        ],
+        "updates": [
+          {
+            "status": "identified",
+            "created_at": "2026-11-06T17:59:13.680Z",
+            "body": "We are continuing to work on a fix for the issue.",
+            "truncated": false
+          },
+          {
+            "status": "investigating",
+            "created_at": "2026-11-06T17:47:15.545Z",
+            "body": "Cloudflare has identified a bug with our purge pipeline impacting fedramp customers. Stale content may be served until expired. Non-fedramp customers are not impacted. ",
+            "truncated": false
+          }
+        ],
+        "updates_total": 2,
+        "url": "https://www.cloudflarestatus.com/incidents/wp49bp8bqo6c"
+      }
+    }
+  ]
+}
