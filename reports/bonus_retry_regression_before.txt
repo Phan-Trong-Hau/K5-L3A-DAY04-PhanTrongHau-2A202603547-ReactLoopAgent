@@ -1,0 +1,17 @@
+test_agent_schedules_bounded_retry_when_model_tries_to_stop (test_robustness.BonusRobustnessTests.test_agent_schedules_bounded_retry_when_model_tries_to_stop) ... FAIL
+
+======================================================================
+FAIL: test_agent_schedules_bounded_retry_when_model_tries_to_stop (test_robustness.BonusRobustnessTests.test_agent_schedules_bounded_retry_when_model_tries_to_stop)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ryanphan/Workspaces/ai_action/labs/K5-L3A-DAY04-PhanTrongHau-2A202603547-ReactLoopAgent/bonus/test_robustness.py", line 128, in test_agent_schedules_bounded_retry_when_model_tries_to_stop
+    self.assertEqual(result['status'], 'completed')
+AssertionError: 'error' != 'completed'
+- error
++ completed
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)

@@ -26,8 +26,12 @@ thực tế hôm nay. `--mode live` gọi public APIs thật và có thể gặp
 - **Budget:** tool hết retry bị loại khỏi schemas khi là status tool; lời gọi model
   cố yêu cầu lại bị từ chối, ghi `tool_blocked` và trả observation đúng call ID.
   Trace phân biệt gọi tool thật (`tool`) với yêu cầu bị chặn (`tool_blocked`).
-- **Arguments:** trả `INVALID_ARGUMENTS` để model sửa theo schema, có validation khi
-  model định kết thúc mà chưa phục hồi lỗi còn budget.
+- **Fallback recovery:** nếu model đã thấy lỗi nhưng cố kết thúc khi còn budget,
+  agent lên lịch retry bằng message/call ID riêng và event `scheduled_retry`. Không
+  giả vờ đây là lời gọi do LLM sinh ra; vẫn tính đúng model calls và tool executions.
+- **Arguments:** trả `INVALID_ARGUMENTS` để model sửa theo schema. Fallback bỏ key
+  không hỗ trợ, sửa integer theo bounds trong schema; không đoán/thay provider hoặc ID.
+  Lỗi rate limit và lỗi định dạng dùng chung budget lỗi liên tiếp, không reset chỉ vì đổi loại lỗi.
 - **Pagination:** câu hỏi yêu cầu timeline/thông báo cũ phải đọc đủ các update;
   track coverage offset/total_updates, nhắc trang thiếu khi final quá sớm. Không
   hard-code ID incident hoặc nội dung đáp án. Page limit ưu tiên 3 theo schema.

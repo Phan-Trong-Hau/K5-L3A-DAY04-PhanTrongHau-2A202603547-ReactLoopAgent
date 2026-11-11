@@ -56,6 +56,27 @@ def compact(observation):
     return result, count
 
 
+
+def repair_arguments(arguments, function):
+    """Remove unsupported keys and repair integers using the registered schema.
+
+    Provider and incident identifiers are never guessed or substituted.
+    """
+    properties = function['parameters'].get('properties', {})
+    fixed = {k: v for k, v in arguments.items() if k in properties}
+    for name, value in list(fixed.items()):
+        spec = properties[name]
+        if spec.get('type') == 'integer':
+            if type(value) is not int:
+                try:
+                    value = int(value) if isinstance(value, str) else spec.get('minimum', 0)
+                except ValueError:
+                    value = spec.get('minimum', 0)
+            value = max(spec.get('minimum', value), value)
+            fixed[name] = min(spec.get('maximum', value), value)
+    return fixed
+
+
 def run_bonus_agent(question, provider, tools, max_steps=16):
     # Import after agent.py dispatch to avoid a module import cycle.
     from agent import _has_observed_source, _status_scope
@@ -67,6 +88,7 @@ def run_bonus_agent(question, provider, tools, max_steps=16):
     trace, usage, sources = [], [], set()
     failures, waits, unavailable, pages = {}, {}, {}, {}
     incident_states = {}
+    last_arguments = {}
     needs_timeline = any(term in question.casefold() for term in
                          ('timeline', 'dòng thời gian', 'toàn bộ cập nhật', 'mọi cập nhật', 'thông báo nào'))
 
@@ -86,6 +108,102 @@ def run_bonus_agent(question, provider, tools, max_steps=16):
                 pending.append({'provider': scope, 'incident_id': incident_id,
                                 'offset': missing[0], 'limit': 3})
         return pending
+
+    def execute_calls(calls, step):
+        for call in calls:
+            arguments = call['arguments']
+            key, executed = None, False
+            try:
+                arguments = json.loads(arguments)
+                if not isinstance(arguments, dict):
+                    raise ValueError('Arguments must be an object')
+            except (ValueError, TypeError) as exc:
+                observation = {'ok': False, 'error': 'INVALID_ARGUMENTS', 'message': str(exc)[:200]}
+            else:
+                scope = _status_scope(call['name'], arguments, schemas)
+                if call['name'] == 'get_incident_details':
+                    candidate = arguments.get('provider')
+                    allowed = functions[call['name']]['parameters']['properties']['provider']['enum']
+                    scope = candidate if candidate in allowed else None
+                key = (call['name'], scope)
+                last_arguments[key] = dict(arguments)
+                state = failures.get(key)
+                if state and state['blocked']:
+                    observation = {'ok': False, 'error': 'RETRY_LIMIT_REACHED',
+                                   'original_error': state['error'], 'retriable': False,
+                                   'message': 'Retry budget exhausted or Retry-After exceeds wait budget. Report missing data.'}
+                else:
+                    remaining = waits.get(key, 0) - time.monotonic()
+                    if remaining > 0:
+                        time.sleep(remaining)
+                        trace.append({'event': 'retry_wait', 'step': step, 'seconds': remaining})
+                    try:
+                        observation = tools.execute(call['name'], arguments)
+                    except Exception as exc:
+                        observation = {'ok': False, 'error': type(exc).__name__, 'message': str(exc)[:200]}
+                    executed = True
+                    error = observation.get('error')
+                    if error in ('RATE_LIMITED', 'INVALID_ARGUMENTS'):
+                        count = (state['count'] if state else 0) + 1
+                        delay = retry_delay(observation) if error == 'RATE_LIMITED' else 0
+                        blocked = count >= MAX_FAILURES or delay > MAX_RETRY_WAIT
+                        failures[key] = {'error': error, 'count': count, 'blocked': blocked}
+                        if blocked:
+                            trace.append({'event': 'retry_exhausted', 'step': step,
+                                          'name': call['name'], 'provider': scope,
+                                          'reason': 'wait_budget' if delay > MAX_RETRY_WAIT else 'attempt_budget'})
+                        waits[key] = time.monotonic() + min(delay, MAX_RETRY_WAIT)
+                    else:
+                        failures.pop(key, None)
+                        failures.pop((call['name'], None), None)
+                        waits.pop(key, None)
+                if scope and call['name'].endswith('_status'):
+                    if observation.get('ok') is False or observation.get('error'):
+                        unavailable[scope] = True
+                    else:
+                        unavailable.pop(scope, None)
+            observation, omitted = compact(observation)
+            if omitted:
+                trace.append({'event': 'context_compacted', 'step': step,
+                              'field': 'distractors', 'omitted_count': omitted})
+            event = 'tool_blocked' if key and not executed else 'tool'
+            trace.append({'event': event, 'step': step, 'name': call['name'],
+                          'arguments': arguments, 'result': observation})
+            messages.append({'role': 'tool', 'tool_call_id': call['id'],
+                             'content': json.dumps(observation, ensure_ascii=False)})
+            if call['name'] == 'get_incident_details' and observation.get('ok'):
+                if observation.get('url'):
+                    sources.add(observation['url'])
+                # Promote only schema-valid labels, typed status and normalized dates,
+                # never incident body/error prose, into the persistent evidence context.
+                identifier, scope = observation.get('id', ''), observation.get('provider')
+                allowed = functions[call['name']]['parameters']['properties']['provider']['enum']
+                status = observation.get('status')
+                if (scope in allowed and isinstance(identifier, str)
+                        and re.fullmatch(r'[A-Za-z0-9_-]{1,100}', identifier)
+                        and status in ('resolved', 'monitoring', 'identified', 'investigating',
+                                       'scheduled', 'in_progress', 'completed')):
+                    state_key = (scope, identifier)
+                    fact = incident_states.setdefault(state_key, {'provider': scope, 'incident_id': identifier})
+                    fact['status_at_snapshot'] = status
+                    timestamps = []
+                    for update in observation.get('updates', []):
+                        try:
+                            date = datetime.fromisoformat(update['created_at'].replace('Z', '+00:00'))
+                            timestamps.append(date.astimezone(timezone.utc).isoformat())
+                        except (ValueError, TypeError, KeyError):
+                            pass
+                    if timestamps:
+                        fact['newest_update_read_at'] = max(timestamps + [fact.get('newest_update_read_at', '')])
+                    try:
+                        date = datetime.fromisoformat(observation['captured_at'].replace('Z', '+00:00'))
+                        fact['captured_at'] = date.astimezone(timezone.utc).isoformat()
+                    except (ValueError, TypeError, KeyError):
+                        pass
+                if type(observation.get('offset')) is int and type(observation.get('total_updates')) is int:
+                    pkey = (observation['provider'], observation['id'])
+                    page = pages.setdefault(pkey, {'total': observation['total_updates'], 'seen': set()})
+                    page['seen'].update(range(observation['offset'], observation['offset'] + len(observation['updates'])))
 
     for step in range(1, max_steps + 1):
         # Remove tools exhausted by repeated 429s from the offered schema list.
@@ -119,99 +237,7 @@ def run_bonus_agent(question, provider, tools, max_steps=16):
         if finish not in ('stop', 'tool_calls'):
             return output('error', error=f'Model stopped unexpectedly: {finish}')
         if calls:
-            for call in calls:
-                arguments = call['arguments']
-                key, executed = None, False
-                try:
-                    arguments = json.loads(arguments)
-                    if not isinstance(arguments, dict):
-                        raise ValueError('Arguments must be an object')
-                except (ValueError, TypeError) as exc:
-                    observation = {'ok': False, 'error': 'INVALID_ARGUMENTS', 'message': str(exc)[:200]}
-                else:
-                    scope = _status_scope(call['name'], arguments, schemas)
-                    if call['name'] == 'get_incident_details':
-                        candidate = arguments.get('provider')
-                        allowed = functions[call['name']]['parameters']['properties']['provider']['enum']
-                        scope = candidate if candidate in allowed else None
-                    key = (call['name'], scope)
-                    state = failures.get(key)
-                    if state and state['blocked']:
-                        observation = {'ok': False, 'error': 'RETRY_LIMIT_REACHED',
-                                       'original_error': state['error'], 'retriable': False,
-                                       'message': 'Retry budget exhausted or Retry-After exceeds wait budget. Report missing data.'}
-                    else:
-                        remaining = waits.get(key, 0) - time.monotonic()
-                        if remaining > 0:
-                            time.sleep(remaining)
-                            trace.append({'event': 'retry_wait', 'step': step, 'seconds': remaining})
-                        try:
-                            observation = tools.execute(call['name'], arguments)
-                        except Exception as exc:
-                            observation = {'ok': False, 'error': type(exc).__name__, 'message': str(exc)[:200]}
-                        executed = True
-                        error = observation.get('error')
-                        if error in ('RATE_LIMITED', 'INVALID_ARGUMENTS'):
-                            count = (state['count'] if state and state['error'] == error else 0) + 1
-                            delay = retry_delay(observation) if error == 'RATE_LIMITED' else 0
-                            blocked = count >= MAX_FAILURES or delay > MAX_RETRY_WAIT
-                            failures[key] = {'error': error, 'count': count, 'blocked': blocked}
-                            if blocked:
-                                trace.append({'event': 'retry_exhausted', 'step': step,
-                                              'name': call['name'], 'provider': scope,
-                                              'reason': 'wait_budget' if delay > MAX_RETRY_WAIT else 'attempt_budget'})
-                            waits[key] = time.monotonic() + min(delay, MAX_RETRY_WAIT)
-                        else:
-                            failures.pop(key, None)
-                            failures.pop((call['name'], None), None)
-                            waits.pop(key, None)
-                    if scope and call['name'].endswith('_status'):
-                        if observation.get('ok') is False or observation.get('error'):
-                            unavailable[scope] = True
-                        else:
-                            unavailable.pop(scope, None)
-                observation, omitted = compact(observation)
-                if omitted:
-                    trace.append({'event': 'context_compacted', 'step': step,
-                                  'field': 'distractors', 'omitted_count': omitted})
-                event = 'tool_blocked' if key and not executed else 'tool'
-                trace.append({'event': event, 'step': step, 'name': call['name'],
-                              'arguments': arguments, 'result': observation})
-                messages.append({'role': 'tool', 'tool_call_id': call['id'],
-                                 'content': json.dumps(observation, ensure_ascii=False)})
-                if call['name'] == 'get_incident_details' and observation.get('ok'):
-                    if observation.get('url'):
-                        sources.add(observation['url'])
-                    # Promote only schema-valid labels, typed status and normalized dates,
-                    # never incident body/error prose, into the persistent evidence context.
-                    identifier, scope = observation.get('id', ''), observation.get('provider')
-                    allowed = functions[call['name']]['parameters']['properties']['provider']['enum']
-                    status = observation.get('status')
-                    if (scope in allowed and isinstance(identifier, str)
-                            and re.fullmatch(r'[A-Za-z0-9_-]{1,100}', identifier)
-                            and status in ('resolved', 'monitoring', 'identified', 'investigating',
-                                           'scheduled', 'in_progress', 'completed')):
-                        state_key = (scope, identifier)
-                        fact = incident_states.setdefault(state_key, {'provider': scope, 'incident_id': identifier})
-                        fact['status_at_snapshot'] = status
-                        timestamps = []
-                        for update in observation.get('updates', []):
-                            try:
-                                date = datetime.fromisoformat(update['created_at'].replace('Z', '+00:00'))
-                                timestamps.append(date.astimezone(timezone.utc).isoformat())
-                            except (ValueError, TypeError, KeyError):
-                                pass
-                        if timestamps:
-                            fact['newest_update_read_at'] = max(timestamps + [fact.get('newest_update_read_at', '')])
-                        try:
-                            date = datetime.fromisoformat(observation['captured_at'].replace('Z', '+00:00'))
-                            fact['captured_at'] = date.astimezone(timezone.utc).isoformat()
-                        except (ValueError, TypeError, KeyError):
-                            pass
-                    if type(observation.get('offset')) is int and type(observation.get('total_updates')) is int:
-                        pkey = (observation['provider'], observation['id'])
-                        page = pages.setdefault(pkey, {'total': observation['total_updates'], 'seen': set()})
-                        page['seen'].update(range(observation['offset'], observation['offset'] + len(observation['updates'])))
+            execute_calls(calls, step)
             continue
         if finish != 'stop':
             return output('error', error='Model returned tool_calls without calls')
@@ -220,9 +246,23 @@ def run_bonus_agent(question, provider, tools, max_steps=16):
                      for key, state in failures.items() if not state['blocked']]
         pending = pending_pages()
         missing = [url for url in sorted(sources) if not _has_observed_source(answer, {url})]
-        if retryable or pending or missing:
-            if retryable:
-                trace.append({'event': 'validation_retry_pending', 'step': step, 'tools': retryable})
+        if retryable:
+            trace.append({'event': 'validation_retry_pending', 'step': step, 'tools': retryable})
+            scheduled = []
+            for index, item in enumerate(retryable):
+                key = (item['tool'], item['provider'])
+                arguments = repair_arguments(last_arguments[key], functions[item['tool']])
+                scheduled.append({'id': f'agent-retry-{step}-{index}', 'name': item['tool'],
+                                  'arguments': json.dumps(arguments, ensure_ascii=False)})
+            # The model has already seen the error and tried to stop. Carry out
+            # routine bounded recovery explicitly; do not invent an LLM response.
+            trace.append({'event': 'scheduled_retry', 'step': step, 'calls': scheduled})
+            messages.append({'role': 'assistant', 'content': None, 'tool_calls': [
+                {'id': c['id'], 'type': 'function', 'function':
+                 {'name': c['name'], 'arguments': c['arguments']}} for c in scheduled]})
+            execute_calls(scheduled, step)
+            continue
+        if pending or missing:
             if pending:
                 trace.append({'event': 'validation_incomplete_timeline', 'step': step, 'next_calls': pending})
             if missing:

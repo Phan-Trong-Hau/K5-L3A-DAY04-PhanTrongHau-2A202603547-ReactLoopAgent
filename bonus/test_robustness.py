@@ -117,3 +117,51 @@ class BonusRobustnessTests(unittest.TestCase):
         self.assertIn('"status_at_snapshot": "resolved"', context)
         self.assertIn('2026-10-12T20:11:12.778000+00:00', context)
         self.assertNotIn('some builds and deployments for GitHub-connected', context)
+
+    def test_agent_schedules_bounded_retry_when_model_tries_to_stop(self):
+        tools = BonusTools(scenario='rate_limit_once')
+        provider = ScriptedProvider([
+            call('first', 'get_vercel_status', {}), final('Không thể kiểm tra'),
+            final('Vercel operational tại snapshot. https://www.vercel-status.com'),
+        ])
+        result = run_agent('Kiểm tra Vercel', provider, tools, max_steps=4)
+        self.assertEqual(result['status'], 'completed')
+        self.assertEqual(tools.calls[('get_vercel_status', 'vercel')], 2)
+        scheduled = next(t for t in result['trace'] if t['event'] == 'scheduled_retry')
+        retry_id = scheduled['calls'][0]['id']
+        self.assertEqual(provider.histories[2][-1]['tool_call_id'], retry_id)
+        self.assertEqual(provider.histories[2][-2]['tool_calls'][0]['id'], retry_id)
+        self.assertEqual(json.loads(provider.histories[2][-1]['content'])['provider'], 'vercel')
+        self.assertEqual(len(result['usage']), 3)
+
+    def test_scheduled_argument_repair_keeps_identifiers_and_uses_schema(self):
+        tools = BonusTools()
+        good = {'provider': 'npm', 'incident_id': 'cc0t2r4403sy'}
+        url = tools.get_incident_details(**good)['url']
+        provider = ScriptedProvider([
+            call('bad', 'get_incident_details', {**good, 'offset': 'zero', 'limit': '3', 'extra': 1}),
+            final('Không thể đọc'), final('Incident resolved. Nguồn: ' + url),
+        ])
+        result = run_agent('Kiểm tra chi tiết', provider, tools, max_steps=4)
+        self.assertEqual(result['status'], 'completed')
+        scheduled = next(t for t in result['trace'] if t['event'] == 'scheduled_retry')
+        fixed = json.loads(scheduled['calls'][0]['arguments'])
+        self.assertEqual(fixed, {**good, 'offset': 0, 'limit': 3})
+        self.assertEqual(tools.calls[('get_incident_details', 'npm')], 2)
+
+    def test_mixed_retry_errors_share_one_failure_budget(self):
+        class MixedErrors(BonusTools):
+            def __init__(self):
+                super().__init__()
+                self.executed = 0
+            def execute(self, name, args):
+                self.executed += 1
+                return {'ok': False, 'error': 'INVALID_ARGUMENTS' if self.executed == 2 else 'RATE_LIMITED',
+                        'retry_after_seconds': 0}
+        tools = MixedErrors()
+        provider = ScriptedProvider([call(str(i), 'get_vercel_status', {}) for i in range(4)] +
+                                    [final('Vercel chưa xác minh được')])
+        result = run_agent('Kiểm tra', provider, tools, max_steps=6)
+        self.assertEqual(result['status'], 'completed')
+        self.assertEqual(tools.executed, 3)
+        self.assertTrue(any(t['event'] == 'tool_blocked' for t in result['trace']))
