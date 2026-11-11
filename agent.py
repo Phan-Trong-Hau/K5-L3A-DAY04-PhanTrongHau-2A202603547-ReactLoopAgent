@@ -39,7 +39,9 @@ def run_agent(question, provider, tools, max_steps=6):
             trace.append({'event': 'provider_error', 'step': step, 'error': error})
             return result('error', error=error)
         if finish not in ('stop', 'tool_calls'):
-            return result('error', error=f'Model stopped unexpectedly: {finish}')
+            error = f'Model stopped unexpectedly: {finish}'
+            trace.append({'event': 'model_error', 'step': step, 'error': error})
+            return result('error', error=error)
         if calls:
             # Return all observations before requesting the next model response.
             for call in calls:
@@ -62,5 +64,8 @@ def run_agent(question, provider, tools, max_steps=6):
             continue
         if finish == 'stop':
             return result('completed', response['message'].get('content') or '')
-        return result('error', error='Model returned tool_calls without calls')
+        error = 'Model returned tool_calls without calls'
+        trace.append({'event': 'model_error', 'step': step, 'error': error})
+        return result('error', error=error)
+    trace.append({'event': 'max_steps', 'step': max_steps})
     return result('max_steps')

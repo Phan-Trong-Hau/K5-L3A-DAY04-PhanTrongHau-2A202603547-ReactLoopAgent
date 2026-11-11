@@ -7,7 +7,7 @@ và dừng trước CP tiếp theo. Chỉ đánh dấu hoàn tất khi đã ki�
 |---|---|---|
 | CP1 | Setup và khám phá tools | Hoàn tất kỹ thuật |
 | CP2 | Agent loop | Hoàn tất kỹ thuật |
-| CP3 | Xử lý lỗi và trace | Có code nền, chưa chốt riêng CP |
+| CP3 | Xử lý lỗi và trace | Hoàn tất kỹ thuật |
 | CP4 | Eval lần 1, đủ 22 case | Chưa hoàn tất |
 | CP5 | Phân tích và cải tiến | Chưa hoàn tất |
 | CP6 | Eval lần 2 và so sánh | Chưa thực hiện |
@@ -136,3 +136,73 @@ PYTHONPATH=tests python3 -m unittest -v test_lab.LoopTests.test_tool_result_is_r
 - Chưa chốt CP3 trong lượt này; chưa chạy bộ eval 22 case hay cải tiến kiểm tra nguồn.
 
 Kết luận: **CP2 hoàn tất về agent loop và kiểm tra chạy model local**.
+
+
+## CP3 — Xử lý lỗi và trace
+
+Ngày kiểm tra: 11/11/2026 (GMT+7). Kiểm tra offline bằng fake provider và tools
+snapshot; không gọi LLM, không cần key, không phát sinh phí API.
+
+### Checklist đã kiểm tra
+
+- [x] `max_steps` giới hạn đúng số lần gọi model, không đếm theo số tools.
+- [x] JSON lỗi hoặc JSON không phải object trả observation `INVALID_ARGUMENTS`.
+- [x] Model có thể nhận lỗi, sửa arguments và gọi lại thành công trong budget.
+- [x] Tool không tồn tại trả `UNKNOWN_TOOL`; status provider sai trả `ValueError`.
+- [x] Timeout và exception từ tool được ghi vào trace, gửi lại model bằng đúng ID.
+- [x] Exception của LLM provider dừng run với `error`, giữ trace và usage đã có.
+- [x] `finish == 'length'`, `content_filter` hoặc lý do bất thường không trả `completed`.
+- [x] Không thực thi partial tool calls khi model dừng bất thường.
+- [x] `finish == 'tool_calls'` mà không có calls trả `error`.
+- [x] Trace có `event`; tool event có `step`, `name`, `arguments`, `result`.
+- [x] Thêm event `model_error` và `max_steps` để thấy rõ nguyên nhân dừng.
+- [x] Chạy toàn bộ unit tests: **49 tests, 47 pass, 2 fail chỉ thuộc validation nguồn CP5**.
+
+Phần error handling đã có trong bản loop nền. Lượt CP3 bổ sung trace lý do dừng
+và 8 tests mới trong `tests/test_cp3_errors.py`; các tests có nhiều subcases về
+kiểu arguments và finish reason. Không thay đổi prompt, dataset, fixtures, grading
+hoặc các tests validation nguồn có sẵn.
+
+### Bằng chứng
+
+- [cp3_tests.txt](cp3_tests.txt): log nguyên bản toàn bộ unit tests.
+- [cp3_errors.json](cp3_errors.json): 7 kịch bản chạy thật qua `run_agent` với response
+  fake dựng sẵn để kiểm tra cơ chế. **Đây không phải câu trả lời từ LLM local và
+  không phải điểm eval.** File có observation được nhận ở lượt model tiếp theo.
+
+| Kịch bản offline | Trạng thái run | Kết quả cần quan sát |
+|---|---|---|
+| JSON lỗi rồi sửa arguments | `completed` | Nhận `INVALID_ARGUMENTS`, sau đó tool thành công. |
+| Tool không tồn tại | `completed` | Model nhận `UNKNOWN_TOOL` và trả lời giới hạn dữ liệu. |
+| Status provider không hỗ trợ | `completed` | Model nhận `ValueError`. |
+| Tool timeout | `completed` | Model nhận `TimeoutError`, báo không đủ dữ liệu. |
+| Model bị cắt output (`length`) | `error` | Trace có `model_error`, không coi partial answer là hoàn tất. |
+| Exception từ LLM provider | `error` | Trace có `provider_error`. |
+| Hết một lượt gọi model | `max_steps` | Không gọi vượt budget; trace có `max_steps`. |
+
+`completed` trong các kịch bản lỗi tool chỉ có nghĩa model kết thúc trả lời;
+không có nghĩa tool thành công hay dịch vụ đang hoạt động. Final ở đây được
+fake provider dựng sẵn để xác minh loop cho model cơ hội nhận và báo lỗi.
+
+### Chạy lại
+
+```bash
+# Tests tập trung CP3: phải pass cả 8 tests.
+PYTHONPATH=tests python3 -m unittest -v test_cp3_errors
+
+# Toàn bộ tests: ở giai đoạn CP3 còn đúng hai lỗi validation nguồn bên dưới.
+python3 -m unittest discover -s tests -v
+```
+
+Hai test chưa pass và sẽ xử lý ở CP5, sau baseline eval CP4:
+
+- `EvidenceGateTests.test_missing_url_gets_revision_within_budget`
+- `EvidenceGateTests.test_missing_url_at_budget_limit_is_not_completed`
+
+Lệnh toàn bộ tests hiện trả exit code 1 vì hai failures trên; không ghi nhận là
+“toàn bộ tests pass”. Đây là trạng thái cho phép tại CP3 theo `CHECKPOINTS.md`.
+Offline tests kiểm tra cơ chế xử lý lỗi, không chứng minh model thật luôn trả lời
+đúng, chống injection tốt hay ổn định. Các nhận định đó cần trace/eval ở CP4–CP6.
+
+Kết luận: **CP3 hoàn tất về kiểm soát lỗi, giới hạn bước và trace**. Chưa chạy CP4
+trong lượt này; chưa áp dụng cải tiến kiểm tra nguồn của CP5.

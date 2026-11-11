@@ -3,7 +3,7 @@
 Họ và tên: Phan Trong Hau
 MSSV: 2A202603547
 
-Tiến độ từng CP: [reports/PROGRESS.md](reports/PROGRESS.md). CP1 và CP2 đã hoàn tất kỹ thuật.
+Tiến độ từng CP: [reports/PROGRESS.md](reports/PROGRESS.md). CP1, CP2 và CP3 đã hoàn tất kỹ thuật.
 
 **Trạng thái: đang thực hiện.** Hiện có smoke test E2 và kiểm tra chạy GitHub Actions của CP2; chưa có hai bộ eval
 đầy đủ 22 case. Nội dung dưới đây ghi nhận lỗi thật, không thay thế báo cáo cuối.
@@ -32,6 +32,9 @@ Answer dùng homepage thay vì URL incident và gọi snapshot là trạng thái
 
 - Đã hoàn thiện loop cơ bản, error observations, max_steps và trace tại `agent.py`.
 - Đã thêm endpoint local, cấu hình Ollama và công cụ terminal chạy thử.
+- CP3: bổ sung trace `model_error`/`max_steps`, kiểm tra lỗi và phục hồi offline;
+  toàn bộ 49 tests có 47 pass, 2 failures kiểm tra nguồn thuộc CP5. Bằng chứng:
+  [reports/cp3_tests.txt](reports/cp3_tests.txt), [reports/cp3_errors.json](reports/cp3_errors.json).
 - **Chưa áp dụng cải tiến nguồn trong phiên bản smoke test này.** Dự kiến ở phần
   tiếp theo: hướng dẫn model đọc chi tiết và thêm validation URL nguồn trong budget.
 - Lý do: trace cho thấy model dừng sớm trước khi thu thập đủ bằng chứng.

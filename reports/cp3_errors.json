@@ -1,0 +1,356 @@
+{
+  "mode": "offline",
+  "note": "FakeProvider trả response dựng sẵn để kiểm tra cơ chế; không phải kết quả LLM local hoặc điểm eval. Tool dùng snapshot gốc, timeout giả lập.",
+  "cases": [
+    {
+      "scenario": "invalid_json_recovery",
+      "result": {
+        "status": "completed",
+        "answer": "Đã nhận kết quả sau khi sửa arguments.",
+        "trace": [
+          {
+            "event": "model",
+            "step": 1,
+            "finish": "tool_calls"
+          },
+          {
+            "event": "tool",
+            "step": 1,
+            "name": "get_status",
+            "arguments": "{",
+            "result": {
+              "ok": false,
+              "error": "INVALID_ARGUMENTS",
+              "message": "Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+            }
+          },
+          {
+            "event": "model",
+            "step": 2,
+            "finish": "tool_calls"
+          },
+          {
+            "event": "tool",
+            "step": 2,
+            "name": "get_status",
+            "arguments": {
+              "provider": "github"
+            },
+            "result": {
+              "provider": "github",
+              "captured_at": "2026-11-09T03:50:47.065020+00:00",
+              "overall": {
+                "indicator": "none",
+                "description": "All Systems Operational"
+              },
+              "components": [],
+              "incidents": [
+                {
+                  "id": "pyynvrm1vskw",
+                  "name": "Increase in timeouts for some unauthenticated users",
+                  "status": "resolved",
+                  "updated_at": "2026-11-08T12:32:35.646Z"
+                },
+                {
+                  "id": "pfbmpxxfq1cy",
+                  "name": "Degraded performance for multiple GitHub services",
+                  "status": "resolved",
+                  "updated_at": "2026-11-06T00:20:49.369Z"
+                },
+                {
+                  "id": "t89g2q1800fr",
+                  "name": "Incident with Actions",
+                  "status": "resolved",
+                  "updated_at": "2026-11-05T17:42:35.455Z"
+                },
+                {
+                  "id": "h02n9572mx9y",
+                  "name": "Incident with Actions",
+                  "status": "resolved",
+                  "updated_at": "2026-11-07T01:10:18.506Z"
+                },
+                {
+                  "id": "xr3myzj7ms51",
+                  "name": "Incident with Actions and Pages",
+                  "status": "resolved",
+                  "updated_at": "2026-11-07T01:04:38.647Z"
+                }
+              ],
+              "matching_incidents_in_last_50": 50,
+              "note": "Chỉ tìm theo chuỗi trong 50 incident gần nhất; không tìm thấy không chứng minh không có sự cố.",
+              "source": "https://www.githubstatus.com"
+            }
+          },
+          {
+            "event": "model",
+            "step": 3,
+            "finish": "stop"
+          }
+        ],
+        "usage": [
+          {},
+          {},
+          {}
+        ]
+      },
+      "observations_received_by_model": [
+        {
+          "role": "tool",
+          "tool_call_id": "bad",
+          "content": "{\"ok\": false, \"error\": \"INVALID_ARGUMENTS\", \"message\": \"Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\"}"
+        },
+        {
+          "role": "tool",
+          "tool_call_id": "bad",
+          "content": "{\"ok\": false, \"error\": \"INVALID_ARGUMENTS\", \"message\": \"Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\"}"
+        },
+        {
+          "role": "tool",
+          "tool_call_id": "fixed",
+          "content": "{\"provider\": \"github\", \"captured_at\": \"2026-11-09T03:50:47.065020+00:00\", \"overall\": {\"indicator\": \"none\", \"description\": \"All Systems Operational\"}, \"components\": [], \"incidents\": [{\"id\": \"pyynvrm1vskw\", \"name\": \"Increase in timeouts for some unauthenticated users\", \"status\": \"resolved\", \"updated_at\": \"2026-11-08T12:32:35.646Z\"}, {\"id\": \"pfbmpxxfq1cy\", \"name\": \"Degraded performance for multiple GitHub services\", \"status\": \"resolved\", \"updated_at\": \"2026-11-06T00:20:49.369Z\"}, {\"id\": \"t89g2q1800fr\", \"name\": \"Incident with Actions\", \"status\": \"resolved\", \"updated_at\": \"2026-11-05T17:42:35.455Z\"}, {\"id\": \"h02n9572mx9y\", \"name\": \"Incident with Actions\", \"status\": \"resolved\", \"updated_at\": \"2026-11-07T01:10:18.506Z\"}, {\"id\": \"xr3myzj7ms51\", \"name\": \"Incident with Actions and Pages\", \"status\": \"resolved\", \"updated_at\": \"2026-11-07T01:04:38.647Z\"}], \"matching_incidents_in_last_50\": 50, \"note\": \"Chỉ tìm theo chuỗi trong 50 incident gần nhất; không tìm thấy không chứng minh không có sự cố.\", \"source\": \"https://www.githubstatus.com\"}"
+        }
+      ]
+    },
+    {
+      "scenario": "unknown_tool",
+      "result": {
+        "status": "completed",
+        "answer": "Không thể gọi tool không tồn tại.",
+        "trace": [
+          {
+            "event": "model",
+            "step": 1,
+            "finish": "tool_calls"
+          },
+          {
+            "event": "tool",
+            "step": 1,
+            "name": "missing",
+            "arguments": {},
+            "result": {
+              "ok": false,
+              "error": "UNKNOWN_TOOL",
+              "message": "Tool không tồn tại: missing"
+            }
+          },
+          {
+            "event": "model",
+            "step": 2,
+            "finish": "stop"
+          }
+        ],
+        "usage": [
+          {},
+          {}
+        ]
+      },
+      "observations_received_by_model": [
+        {
+          "role": "tool",
+          "tool_call_id": "unknown",
+          "content": "{\"ok\": false, \"error\": \"UNKNOWN_TOOL\", \"message\": \"Tool không tồn tại: missing\"}"
+        }
+      ]
+    },
+    {
+      "scenario": "invalid_status_provider",
+      "result": {
+        "status": "completed",
+        "answer": "Provider không được hỗ trợ.",
+        "trace": [
+          {
+            "event": "model",
+            "step": 1,
+            "finish": "tool_calls"
+          },
+          {
+            "event": "tool",
+            "step": 1,
+            "name": "get_status",
+            "arguments": {
+              "provider": "invalid"
+            },
+            "result": {
+              "ok": false,
+              "error": "ValueError",
+              "message": "provider phải là github hoặc cloudflare"
+            }
+          },
+          {
+            "event": "model",
+            "step": 2,
+            "finish": "stop"
+          }
+        ],
+        "usage": [
+          {},
+          {}
+        ]
+      },
+      "observations_received_by_model": [
+        {
+          "role": "tool",
+          "tool_call_id": "invalid",
+          "content": "{\"ok\": false, \"error\": \"ValueError\", \"message\": \"provider phải là github hoặc cloudflare\"}"
+        }
+      ]
+    },
+    {
+      "scenario": "tool_timeout",
+      "result": {
+        "status": "completed",
+        "answer": "Không đủ dữ liệu vì tool timeout; chưa xác minh được trạng thái.",
+        "trace": [
+          {
+            "event": "model",
+            "step": 1,
+            "finish": "tool_calls"
+          },
+          {
+            "event": "tool",
+            "step": 1,
+            "name": "get_status",
+            "arguments": {
+              "provider": "github"
+            },
+            "result": {
+              "ok": false,
+              "error": "TimeoutError",
+              "message": "Không thể lấy dữ liệu status (timeout giả lập)."
+            }
+          },
+          {
+            "event": "model",
+            "step": 2,
+            "finish": "stop"
+          }
+        ],
+        "usage": [
+          {},
+          {}
+        ]
+      },
+      "observations_received_by_model": [
+        {
+          "role": "tool",
+          "tool_call_id": "timeout",
+          "content": "{\"ok\": false, \"error\": \"TimeoutError\", \"message\": \"Không thể lấy dữ liệu status (timeout giả lập).\"}"
+        }
+      ]
+    },
+    {
+      "scenario": "model_length",
+      "result": {
+        "status": "error",
+        "answer": "",
+        "trace": [
+          {
+            "event": "model",
+            "step": 1,
+            "finish": "length"
+          },
+          {
+            "event": "model_error",
+            "step": 1,
+            "error": "Model stopped unexpectedly: length"
+          }
+        ],
+        "usage": [
+          {}
+        ],
+        "error": "Model stopped unexpectedly: length"
+      },
+      "observations_received_by_model": []
+    },
+    {
+      "scenario": "provider_exception",
+      "result": {
+        "status": "error",
+        "answer": "",
+        "trace": [
+          {
+            "event": "provider_error",
+            "step": 1,
+            "error": "RuntimeError: provider offline (CP3 simulation)"
+          }
+        ],
+        "usage": [],
+        "error": "RuntimeError: provider offline (CP3 simulation)"
+      }
+    },
+    {
+      "scenario": "max_steps",
+      "result": {
+        "status": "max_steps",
+        "answer": "",
+        "trace": [
+          {
+            "event": "model",
+            "step": 1,
+            "finish": "tool_calls"
+          },
+          {
+            "event": "tool",
+            "step": 1,
+            "name": "get_status",
+            "arguments": {
+              "provider": "github"
+            },
+            "result": {
+              "provider": "github",
+              "captured_at": "2026-11-09T03:50:47.065020+00:00",
+              "overall": {
+                "indicator": "none",
+                "description": "All Systems Operational"
+              },
+              "components": [],
+              "incidents": [
+                {
+                  "id": "pyynvrm1vskw",
+                  "name": "Increase in timeouts for some unauthenticated users",
+                  "status": "resolved",
+                  "updated_at": "2026-11-08T12:32:35.646Z"
+                },
+                {
+                  "id": "pfbmpxxfq1cy",
+                  "name": "Degraded performance for multiple GitHub services",
+                  "status": "resolved",
+                  "updated_at": "2026-11-06T00:20:49.369Z"
+                },
+                {
+                  "id": "t89g2q1800fr",
+                  "name": "Incident with Actions",
+                  "status": "resolved",
+                  "updated_at": "2026-11-05T17:42:35.455Z"
+                },
+                {
+                  "id": "h02n9572mx9y",
+                  "name": "Incident with Actions",
+                  "status": "resolved",
+                  "updated_at": "2026-11-07T01:10:18.506Z"
+                },
+                {
+                  "id": "xr3myzj7ms51",
+                  "name": "Incident with Actions and Pages",
+                  "status": "resolved",
+                  "updated_at": "2026-11-07T01:04:38.647Z"
+                }
+              ],
+              "matching_incidents_in_last_50": 50,
+              "note": "Chỉ tìm theo chuỗi trong 50 incident gần nhất; không tìm thấy không chứng minh không có sự cố.",
+              "source": "https://www.githubstatus.com"
+            }
+          },
+          {
+            "event": "max_steps",
+            "step": 1
+          }
+        ],
+        "usage": [
+          {}
+        ]
+      },
+      "observations_received_by_model": []
+    }
+  ]
+}
