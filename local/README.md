@@ -51,9 +51,10 @@ kết thúc bình thường, không bảo đảm câu trả lời đúng. Mỗi 
 không kiểm tra tình trạng thực tế hôm nay. Mở `reports/smoke_e2.json` để xem mẫu
 kết quả eval một case, hoặc đọc `reports/SMOKE_REPORT.md`.
 
-Bản baseline hiện còn thiếu kiểm tra nguồn bằng code nên 2 tests trong
-`EvidenceGateTests` chưa pass. Đây là việc của phần cải tiến tiếp theo;
-không phải lỗi cài Ollama. Bộ test local endpoint chạy riêng bằng:
+Bản hiện tại sau CP5 đã có source gate và ngữ cảnh partial failure;
+56/56 tests chính pass, gồm cả 2 tests `EvidenceGateTests` từng fail ở baseline.
+Xem [báo cáo CP5](../reports/CP5_REPORT.md); full eval lần 2 chưa chạy (CP6).
+Bộ test local endpoint chạy riêng bằng:
 
 ```bash
 python3 -m unittest discover -s tests -p 'test_local_provider.py' -v

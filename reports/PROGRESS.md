@@ -9,7 +9,7 @@ và dừng trước CP tiếp theo. Chỉ đánh dấu hoàn tất khi đã ki�
 | CP2 | Agent loop | Hoàn tất kỹ thuật |
 | CP3 | Xử lý lỗi và trace | Hoàn tất kỹ thuật |
 | CP4 | Eval lần 1, đủ 22 case | Hoàn tất — 84.27/100, 22/22 case |
-| CP5 | Phân tích và cải tiến | Chưa hoàn tất |
+| CP5 | Phân tích và cải tiến | Hoàn tất — 56/56 tests chính pass |
 | CP6 | Eval lần 2 và so sánh | Chưa thực hiện |
 | CP7 | Demo và nộp bài | Chưa thực hiện |
 
@@ -252,3 +252,34 @@ Không phát sinh phí API dịch vụ trong lượt local; chưa đo chi phí �
 
 Kết luận: **CP4 hoàn tất về eval baseline và phân tích lỗi**. Chưa implement
 cải tiến CP5; chưa tạo `eval_after.json` của CP6.
+
+
+## CP5 — Phân tích và cải tiến
+
+Ngày thực hiện: 11/11/2026 (GMT+7). Case chọn: H7, baseline 40/100.
+
+### Checklist đã kiểm tra
+
+- [x] Chọn lỗi thật từ full eval CP4, ghi evidence và giả thuyết nguyên nhân.
+- [x] Thêm quy tắc bằng chứng, ngày chạy UTC và ngữ cảnh provider chưa xác minh.
+- [x] Xóa ngữ cảnh lỗi sau khi retry status thành công; không đưa error prose lên system.
+- [x] Thêm source gate: `validation_missing_source`, revision trong budget,
+  hết budget không báo `completed`, không ép nguồn từ incident tool thất bại.
+- [x] Toàn bộ 56 tests chính pass, gồm hai tests nguồn từng fail.
+- [x] 3 tests tương thích bonus pass, không chạy eval bonus.
+- [x] Kiểm tra riêng H7 bằng model local: prompt chung vẫn 40 điểm;
+  thêm context từ observation đạt 95 điểm trong lượt thử sau.
+- [x] Giữ nguyên `eval_before.json`, dataset, fixtures, grading, adapter và weights.
+- [x] Cập nhật `NOTES.md`; ghi rõ chưa có so sánh full eval trước–sau.
+
+Report: [CP5_REPORT.md](CP5_REPORT.md). Tests: [cp5_tests.txt](cp5_tests.txt).
+Evidence local: [cp5_h7_prompt_only.json](cp5_h7_prompt_only.json),
+[cp5_h7_check.json](cp5_h7_check.json). Gate offline: [cp5_source_checks.json](cp5_source_checks.json).
+Manifest: [cp5_manifest.json](cp5_manifest.json).
+
+Giới hạn: source gate chỉ kiểm tra sự hiện diện một URL đã quan sát, không chứng
+minh factuality. Model có thể tiếp tục sai ở case khác; answer H7 mới còn suy diễn
+số incident Actions từ truy vấn không lọc. Cần full eval CP6 trước kết luận tổng thể.
+
+Kết luận: **CP5 hoàn tất về implement cải tiến và tests**. Dừng trước CP6;
+chưa tạo `eval_after.json`, chưa có điểm tổng sau cải tiến.
