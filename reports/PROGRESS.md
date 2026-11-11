@@ -338,3 +338,9 @@ link LMS bằng tài khoản cá nhân. Phiên này không có browser hay tích
 Dùng `python3 local/check_submission.py` để kiểm tra lại, và
 `python3 local/demo.py --case A8 --version after --summary-only` để xem trace nhiều bước.
 Bài chính sẵn sàng về kỹ thuật; bonus 15 điểm chưa thực hiện bộ eval riêng.
+
+
+Xác nhận bàn giao GitHub: PR #1 đã merge vào `main`; đã mở public main không đăng nhập
+và kiểm tra code, hai eval JSON, notes/report/demo, hashes dữ liệu khớp bản đã eval.
+Bằng chứng: [cp7_remote_verification.json](cp7_remote_verification.json).
+Trạng thái LMS và trình bày trực tiếp vẫn chưa xác nhận.

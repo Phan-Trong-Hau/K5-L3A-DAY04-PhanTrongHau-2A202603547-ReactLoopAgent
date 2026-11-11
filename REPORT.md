@@ -71,5 +71,5 @@ Các lệnh trên không gọi model. Chạy câu hỏi mới: xem [hướng d�
 Repo: https://github.com/Phan-Trong-Hau/K5-L3A-DAY04-PhanTrongHau-2A202603547-ReactLoopAgent
 
 Nơi nộp: https://aithucchien.vinuni.edu.vn — bài Day 04, tài khoản cá nhân.
-Bản main cần có `agent.py`, hai file eval và `NOTES.md`; kiểm tra trực tiếp link trước
-khi nộp. Phần trình bày trực tiếp và xác nhận LMS không được tự đánh dấu đã hoàn tất.
+PR #1 đã merge; public main đã được kiểm tra có đúng code, hai file eval và notes/report/demo.
+Bằng chứng: [xác nhận GitHub](reports/cp7_remote_verification.json). Phần trình bày trực tiếp và xác nhận LMS không được tự đánh dấu đã hoàn tất.

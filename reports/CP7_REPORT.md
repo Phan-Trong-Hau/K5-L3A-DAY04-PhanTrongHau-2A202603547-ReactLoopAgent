@@ -39,8 +39,10 @@ vì thiếu tool bắt buộc. Kịch bản không che các lỗi còn lại.
 ## Trạng thái GitHub và phạm vi
 
 Bài làm được phát triển trên branch `feat/local-status-agent`; PR #1 dùng để đưa
-bản kiểm tra vào main cho link repo mặc định. Branch được giữ lại để xem lịch sử
-CP1–CP7. Trước khi nộp cần mở main và thấy đủ bộ file, không nộp nhầm repo đề.
+bản kiểm tra vào main cho link repo mặc định. **PR #1 đã merge** tại commit
+`1a4a7ea`; đã truy cập public main không đăng nhập và kiểm tra file/hashes
+khớp bản đã eval. Branch được giữ lại để xem lịch sử CP1–CP7. Bằng chứng:
+[cp7_remote_verification.json](cp7_remote_verification.json).
 
 Repo: https://github.com/Phan-Trong-Hau/K5-L3A-DAY04-PhanTrongHau-2A202603547-ReactLoopAgent
 PR: https://github.com/Phan-Trong-Hau/K5-L3A-DAY04-PhanTrongHau-2A202603547-ReactLoopAgent/pull/1

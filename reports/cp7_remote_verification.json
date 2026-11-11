@@ -1,0 +1,31 @@
+{
+  "verified_at": "2026-11-11T22:19:01.465869+07:00",
+  "verified_main_commit": "1a4a7ea25daa0427534a485fe3eeee8ee76e846c",
+  "repo_url": "https://github.com/Phan-Trong-Hau/K5-L3A-DAY04-PhanTrongHau-2A202603547-ReactLoopAgent",
+  "pr": {
+    "number": 1,
+    "state": "MERGED",
+    "merge_commit": "1a4a7ea25daa0427534a485fe3eeee8ee76e846c"
+  },
+  "unauthenticated_repo_http_status": 200,
+  "public_main_files_verified": {
+    "agent.py": "7c6a9e9aa0414e74ce3f0df548ea0462927d868cf4eb0fe59115025f994afd00",
+    "eval_before.json": "1227c41a33b5cd638947f5454d66da67cd5d6e63d2cd52c260b2f208aee780db",
+    "eval_after.json": "1f13a49964335ef61ed0eda9a8ab122ed13aa40906528943debe2492932b432c",
+    "NOTES.md": "e3d14f3256d3f127a1006f7c10e250121305decf51d1493eae168c99a1a87999",
+    "REPORT.md": "999cfdd17c886592cacdbcc530a43f1e1424eca82b1f45222af1342427c8ba5a",
+    "DEMO.md": "331a4593bc942cf9a4df05a15f57c6a891b3e88191ed61f23564d01240c853bd"
+  },
+  "evaluated_code_and_dataset_hashes_match": true,
+  "lms": {
+    "submitted": false,
+    "browser_inventory": {
+      "apps": [],
+      "browsers": []
+    },
+    "matching_plugin_count": 0,
+    "note": "No connected browser or LMS integration to submit/verify. Student must use their own LMS account."
+  },
+  "live_presentation_confirmed": false,
+  "bonus_eval_completed": false
+}
