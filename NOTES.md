@@ -4,7 +4,7 @@ Họ và tên: Phan Trong Hau
 MSSV: 2A202603547
 
 Tiến độ từng CP: [reports/PROGRESS.md](reports/PROGRESS.md).
-**CP1–CP6 đã hoàn tất kỹ thuật; CP7 chưa thực hiện.**
+**CP1–CP6 hoàn tất; CP7 đã chuẩn bị/kiểm tra bộ nộp và demo replay, chờ trình bày trực tiếp/nộp LMS.**
 Báo cáo baseline: [reports/CP4_REPORT.md](reports/CP4_REPORT.md).
 Báo cáo cải tiến: [reports/CP5_REPORT.md](reports/CP5_REPORT.md).
 So sánh cuối: [reports/CP6_REPORT.md](reports/CP6_REPORT.md).
@@ -135,7 +135,8 @@ Bảng 22 case, phân tích chi tiết và manifest:
 [reports/cp6_run_manifest.json](reports/cp6_run_manifest.json).
 
 Kết luận: sửa được H7 trong lượt đo này nhưng chưa chứng minh cải thiện toàn diện;
-token tăng nhiều so với điểm tổng. CP7 sẽ demo và chốt nộp bài, chưa thực hiện.
+token tăng nhiều so với điểm tổng. CP7 đã có demo replay và kiểm tra bàn giao ở [reports/CP7_REPORT.md](reports/CP7_REPORT.md);
+chưa xác nhận trình bày trực tiếp hoặc nộp LMS.
 
 ## 5. Giới hạn
 

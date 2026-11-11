@@ -11,7 +11,7 @@ và dừng trước CP tiếp theo. Chỉ đánh dấu hoàn tất khi đã ki�
 | CP4 | Eval lần 1, đủ 22 case | Hoàn tất — 84.27/100, 22/22 case |
 | CP5 | Phân tích và cải tiến | Hoàn tất — 56/56 tests chính pass |
 | CP6 | Eval lần 2 và so sánh | Hoàn tất — 85.73/100, 22/22 case |
-| CP7 | Demo và nộp bài | Chưa thực hiện |
+| CP7 | Demo và nộp bài | Bộ nộp/demo replay sẵn sàng; chờ trình bày/nộp LMS |
 
 ## CP1 — Setup và khám phá tools
 
@@ -322,3 +322,19 @@ Manifest: [cp6_run_manifest.json](cp6_run_manifest.json). Tests: [cp6_tests.txt]
 
 Kết luận: **CP6 hoàn tất về eval và phân tích trước–sau**. Dừng trước CP7;
 chưa demo cuối, merge main hoặc nộp link LMS trong lượt này.
+
+
+## CP7 — Demo và bàn giao
+
+Đã kiểm tra đủ bộ nộp, đúng cấu hình/hashes, repo public đúng tên, không track `.env`,
+59/59 tests chính và 3/3 tests tương thích bonus pass. Chuẩn bị/chạy demo replay A8,
+H7 và H2; có [DEMO.md](../DEMO.md), [REPORT.md](../REPORT.md),
+[CP7_REPORT.md](CP7_REPORT.md) và [nội dung dán LMS](LMS_SUBMISSION.txt).
+
+**Chưa đánh dấu CP7 hoàn tất toàn bộ:** người học còn trình bày trực tiếp và nộp
+link LMS bằng tài khoản cá nhân. Phiên này không có browser hay tích hợp LMS kết nối
+để gửi/xác minh bài. Không tuyên bố đã nộp hoặc nộp đúng hạn.
+
+Dùng `python3 local/check_submission.py` để kiểm tra lại, và
+`python3 local/demo.py --case A8 --version after --summary-only` để xem trace nhiều bước.
+Bài chính sẵn sàng về kỹ thuật; bonus 15 điểm chưa thực hiện bộ eval riêng.

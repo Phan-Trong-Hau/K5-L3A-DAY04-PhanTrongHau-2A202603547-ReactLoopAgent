@@ -1,0 +1,7 @@
+https://github.com/Phan-Trong-Hau/K5-L3A-DAY04-PhanTrongHau-2A202603547-ReactLoopAgent
+
+Phan Trọng Hậu — 2A202603547 — L3A, Day 04.
+Bài chính: agent Python tự viết, model local Ollama Qwen3 4B.
+Hai bộ eval đủ 22 case: 84.27 → 85.73/100; H7: 40 → 93.
+Code, eval_before.json, eval_after.json, NOTES.md và hướng dẫn demo có trong repo.
+Điểm eval là tham khảo, không phải điểm lab được giảng viên chấm.

@@ -1,0 +1,17 @@
+REPLAY EVIDENCE ĐÃ LƯU — không phải lần chạy model mới.
+
+eval_after.json / A8 / status=completed / score=100
+Câu hỏi: So sánh incident GitHub Actions t89g2q1800fr với incident Cloudflare Workers Builds yaa0witbl2me: thời điểm, trạng thái, phạm vi, và các nguồn. Có đủ căn cứ kết luận hai incident cùng nguyên nhân không?
+Model calls: 3
+Step 1 / model {"finish": "tool_calls"}
+Step 1 / tool get_status {"provider": "github", "component": "Actions"}
+  Evidence: {"provider": "github", "overall": {"indicator": "none", "description": "All Systems Operational"}, "source": "https://www.githubstatus.com", "captured_at": "2026-11-09T03:50:47.065020+00:00"}
+Step 1 / tool get_status {"provider": "cloudflare", "component": "Workers Builds"}
+  Evidence: {"provider": "cloudflare", "overall": {"indicator": "major", "description": "Partial System Outage"}, "source": "https://www.cloudflarestatus.com", "captured_at": "2026-11-09T03:50:47.638054+00:00"}
+Step 2 / model {"finish": "tool_calls"}
+Step 2 / tool get_incident_details {"provider": "github", "incident_id": "t89g2q1800fr"}
+  Evidence: {"provider": "github", "ok": true, "id": "t89g2q1800fr", "status": "resolved", "url": "https://stspg.io/lv4q3xm9r0rk", "captured_at": "2026-11-09T03:50:47.065020+00:00"}
+Step 2 / tool get_incident_details {"provider": "cloudflare", "incident_id": "yaa0witbl2me"}
+  Evidence: {"provider": "cloudflare", "ok": true, "id": "yaa0witbl2me", "status": "resolved", "url": "https://www.cloudflarestatus.com/incidents/yaa0witbl2me", "captured_at": "2026-11-09T03:50:47.638054+00:00"}
+Step 3 / model {"finish": "stop"}
+Mechanical checks: {"violations": [], "score_cap": 100, "tool_calls": 4, "tool_steps": 2}
