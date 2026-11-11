@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def main():
     parser = argparse.ArgumentParser(description='Demo trace đã ghi: không gọi model/API')
     parser.add_argument('--case', default='A8')
-    parser.add_argument('--version', choices=['before', 'after', 'both'], default='both')
+    parser.add_argument('--version', choices=['before', 'after', 'both', 'bonus'], default='both')
     parser.add_argument('--summary-only', action='store_true', help='Chỉ hiện trace và điểm, bỏ answer')
     parser.add_argument('--full-trace', action='store_true', help='Hiện đầy đủ JSON trace')
     args = parser.parse_args()
@@ -17,6 +17,8 @@ def main():
     print('REPLAY EVIDENCE ĐÃ LƯU — không phải lần chạy model mới.')
     for version in versions:
         path = ROOT / f'eval_{version}.json'
+        if not path.exists():
+            parser.error(f'Chưa có file {path.name}; cần hoàn tất eval tương ứng trước.')
         report = json.loads(path.read_text(encoding='utf-8'))
         case = next((c for c in report['cases'] if c['id'] == args.case.upper()), None)
         if case is None:

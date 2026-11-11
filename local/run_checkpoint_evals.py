@@ -1,4 +1,4 @@
-"""Run the unchanged core evaluator, saving each finished case for safe resumption."""
+"""Run the unchanged evaluator, saving each finished case for safe resumption."""
 import argparse
 from datetime import datetime, timezone
 import hashlib
@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / 'evals'))
 from run_evals import run_case
-from grading import summarize
+from grading import summarize, bonus_points
 
 
 def write_json(path, data):
@@ -25,18 +25,26 @@ def write_json(path, data):
 
 def main():
     parser = argparse.ArgumentParser(description='Full core eval with per-case checkpoints; no grading changes')
-    parser.add_argument('--checkpoint', type=Path, default=ROOT / 'reports/cp6_checkpoint.json')
-    parser.add_argument('--output', type=Path, default=ROOT / 'eval_after.json')
+    parser.add_argument('--bonus', action='store_true')
+    parser.add_argument('--checkpoint', type=Path)
+    parser.add_argument('--output', type=Path)
     parser.add_argument('--resume', action='store_true')
     options = parser.parse_args()
     baseline = json.loads((ROOT / 'eval_before.json').read_text())
-    config = baseline['config']
-    if config['dataset'] != 'core':
+    config = dict(baseline['config'])
+    if options.bonus:
+        config.update(dataset='bonus', max_steps=16)
+    options.checkpoint = options.checkpoint or ROOT / ('reports/bonus_checkpoint.json' if options.bonus else 'reports/cp6_checkpoint.json')
+    options.output = options.output or ROOT / ('eval_bonus.json' if options.bonus else 'eval_after.json')
+    if config['dataset'] not in ('core', 'bonus'):
         parser.error('This runner supports the core dataset only.')
-    cases = json.loads((ROOT / 'evals/cases.json').read_text())
+    cases = json.loads((ROOT / ('bonus/cases.json' if options.bonus else 'evals/cases.json')).read_text())
     paths = ['agent.py', 'providers.py', 'status_tools.py', 'evals/run_evals.py',
              'evals/cases.json', 'evals/scenarios.py', 'evals/grading.py', 'local/Modelfile',
              'fixtures/github.json', 'fixtures/cloudflare.json']
+    if options.bonus:
+        paths += ['bonus/agent.py', 'bonus/tools.py', 'bonus/cases.json']
+        paths += [str(p.relative_to(ROOT)) for p in sorted((ROOT / 'bonus/fixtures').glob('*.json'))]
     endpoint = os.getenv('OPENAI_BASE_URL', 'http://localhost:11434/v1').rstrip('/')
     request = urllib.request.Request(endpoint.removesuffix('/v1') + '/api/show',
                                      data=json.dumps({'model': config['model']}).encode(),
@@ -67,7 +75,7 @@ def main():
                  'fingerprint': fingerprint, 'cases': [], 'state': 'running'}
         results = state['cases']
         write_json(options.checkpoint, state)
-    args = SimpleNamespace(**config, bonus=False)
+    args = SimpleNamespace(**config, bonus=options.bonus)
     for case in cases[len(results):]:
         print(f"Đang chạy {case['id']} ({len(results)}/{len(cases)} đã lưu)", flush=True)
         item = run_case(case, args)
@@ -76,6 +84,8 @@ def main():
         write_json(options.checkpoint, state)
         print(f"{item['id']}: {item['grade']['score']} ({item['grade']['status']}); checkpoint saved", flush=True)
     report = {'summary': summarize(results), 'config': config, 'cases': results}
+    if options.bonus:
+        report['summary']['bonus_points_0_15'] = bonus_points(report['summary']['score_0_100'], len(results) == len(cases))
     write_json(options.output, report)
     state['state'] = 'complete'
     write_json(options.checkpoint, state)
