@@ -23,7 +23,8 @@ local dùng 300 vì model chạy trên phần cứng giới hạn. Số model ca
 chặn bởi `max_steps`; đây không phải giới hạn tổng thời gian chạy.
 
 Khi chạy hai bộ eval chính, cần giữ cùng alias, cấu hình Modelfile và 8 steps,
-workers=1, snapshot nguyên bản. Hiện chưa hoàn tất hai bộ eval. Không chạy nhiều workers trên GPU 4 GB để tránh tranh bộ nhớ.
+workers=1, snapshot nguyên bản. CP4 đã có `eval_before.json` đủ 22 case;
+`eval_after.json` chưa chạy (CP6). Không chạy nhiều workers trên GPU 4 GB để tránh tranh bộ nhớ.
 Model và judge dùng chung trọng số nên điểm chỉ là tham khảo. Cấu hình local
 không tính giá API; file eval chứa token usage, không chứa phép đo điện năng.
 

@@ -8,7 +8,7 @@ và dừng trước CP tiếp theo. Chỉ đánh dấu hoàn tất khi đã ki�
 | CP1 | Setup và khám phá tools | Hoàn tất kỹ thuật |
 | CP2 | Agent loop | Hoàn tất kỹ thuật |
 | CP3 | Xử lý lỗi và trace | Hoàn tất kỹ thuật |
-| CP4 | Eval lần 1, đủ 22 case | Chưa hoàn tất |
+| CP4 | Eval lần 1, đủ 22 case | Hoàn tất — 84.27/100, 22/22 case |
 | CP5 | Phân tích và cải tiến | Chưa hoàn tất |
 | CP6 | Eval lần 2 và so sánh | Chưa thực hiện |
 | CP7 | Demo và nộp bài | Chưa thực hiện |
@@ -206,3 +206,49 @@ Offline tests kiểm tra cơ chế xử lý lỗi, không chứng minh model th�
 
 Kết luận: **CP3 hoàn tất về kiểm soát lỗi, giới hạn bước và trace**. Chưa chạy CP4
 trong lượt này; chưa áp dụng cải tiến kiểm tra nguồn của CP5.
+
+
+## CP4 — Eval lần 1
+
+Ngày chạy: 11/11/2026 (GMT+7). Baseline sau CP3 tại commit `430f084`.
+
+### Checklist đã kiểm tra
+
+- [x] Chạy đủ 22 case E1–E6, A1–A8, H1–H8 trong một lượt bằng Ollama local.
+- [x] Lưu kết quả gốc tại [eval_before.json](../eval_before.json).
+- [x] `summary.score_0_100 = 84.27`, `scored_cases = 22`, `unscored_cases = 0`.
+- [x] Đọc `grade.reason`, `grade.improvement`, `grade.mechanical`, answer và trace.
+- [x] Lập danh sách lỗi có bằng chứng: H7, H1/H6, H3, A5, E2.
+- [x] Ghi nhận judge chấm sai hoặc thiếu căn cứ; không sửa tay điểm.
+- [x] Thống kê 43 model calls agent, 32 tool calls, 22 lượt judge, 92,234 token tổng.
+- [x] Lưu cấu hình, model digest và SHA-256; xác nhận code/dataset/fixtures không đổi.
+- [x] Cập nhật `NOTES.md` với case dự kiến ưu tiên H7 và số liệu baseline.
+
+### Tóm tắt phát hiện
+
+- H7 (40): tool Cloudflare timeout nhưng agent vẫn khẳng định operational.
+- H3 (50): không gọi tool nhưng tuyên bố ID không tồn tại.
+- H1/H6 (60): không đọc tiếp incident được dẫn chiếu; bị áp trần bởi code.
+- A5 (100): agent nói năm 2025 chưa đến, judge vẫn cho điểm tối đa — lỗi ẩn sau điểm cao.
+- E2 (88): suy diễn phạm vi và trạng thái từ danh sách incident, chưa đọc update.
+- Tất cả runs đều `completed`, cho thấy trạng thái kết thúc không chứng minh answer đúng.
+
+Báo cáo chi tiết, bảng 22 case và phân tích judge: [CP4_REPORT.md](CP4_REPORT.md).
+Log: [cp4_eval.log](cp4_eval.log). Cấu hình/hashes: [cp4_run_manifest.json](cp4_run_manifest.json).
+
+### Chạy lại hoặc đọc kết quả
+
+```bash
+# Đọc báo cáo đã có mà không gọi model:
+python3 -c 'import json; r=json.load(open("eval_before.json")); print(r["summary"]); print(r["config"])'
+
+# Nếu cần tái chạy để thử, ghi file khác để giữ nguyên mốc baseline:
+source local/env.sh
+python3 evals/run_evals.py --max-steps 8 --workers 1 --output eval_results_cp4_retry.json
+```
+
+Không phát sinh phí API dịch vụ trong lượt local; chưa đo chi phí điện/phần cứng.
+Điểm judge chỉ là ước lượng; CP4 không chỉnh score theo nhận xét thủ công.
+
+Kết luận: **CP4 hoàn tất về eval baseline và phân tích lỗi**. Chưa implement
+cải tiến CP5; chưa tạo `eval_after.json` của CP6.
