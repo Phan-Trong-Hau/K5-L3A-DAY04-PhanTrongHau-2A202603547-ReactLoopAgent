@@ -1,0 +1,21 @@
+PASS: File bắt buộc agent.py
+PASS: File bắt buộc eval_before.json
+PASS: File bắt buộc eval_after.json
+PASS: File bắt buộc NOTES.md
+PASS: before: đủ đúng 22 case
+PASS: before: không có unscored
+PASS: before: điểm tổng khác null
+PASS: before: điểm tổng khớp case scores
+PASS: after: đủ đúng 22 case
+PASS: after: không có unscored
+PASS: after: điểm tổng khác null
+PASS: after: điểm tổng khớp case scores
+PASS: Hai cấu hình eval giống nhau
+PASS: NOTES có đủ 5 mục
+PASS: Code/dữ liệu khớp bản đã eval CP6
+PASS: Giữ nguyên kết quả eval_before
+PASS: Giữ nguyên kết quả eval_after
+PASS: Không track file .env
+PASS: Không khớp các mẫu credential phổ biến trong file tracked (không phải bảo đảm tuyệt đối)
+
+LMS và demo trực tiếp cần xác nhận riêng; script không chứng nhận đã nộp bài.

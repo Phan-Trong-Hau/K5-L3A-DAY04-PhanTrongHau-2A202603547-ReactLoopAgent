@@ -1,0 +1,86 @@
+{
+  "status": "completed",
+  "answer": "Dựa trên dữ liệu hiện có, **không có sự cố hiện tại đang xảy ra trên GitHub Actions**.\n\nTuy nhiên, trong lịch sử 50 sự cố gần nhất, có một số sự cố liên quan đến GitHub Actions, bao gồm:\n\n1. **\"Incident with Actions\"** (ID: `t89g2q1800fr`) – Đã được giải quyết, xảy ra vào ngày 2026-11-05.\n2. **\"Incident with Actions\"** (ID: `h02n9572mx9y`) – Đã được giải quyết, xảy ra vào ngày 2026-11-07.\n3. **\"Incident with Actions and Pages\"** (ID: `xr3myzj7ms51`) – Đã được giải quyết, xảy ra vào ngày 2026-11-07.\n\nTất cả các sự cố này đều **đã được giải quyết** và không còn ảnh hưởng đến hệ thống hiện tại.\n\n👉 **Kết luận**: GitHub Actions hiện tại đang hoạt động ổn định. Các sự cố trước đó đã được xử lý và không còn ảnh hưởng đến trạng thái hiện tại.\n\nNguồn: [GitHub Status](https://www.githubstatus.com)",
+  "trace": [
+    {
+      "event": "model",
+      "step": 1,
+      "finish": "tool_calls"
+    },
+    {
+      "event": "tool",
+      "step": 1,
+      "name": "get_status",
+      "arguments": {
+        "provider": "github"
+      },
+      "result": {
+        "provider": "github",
+        "captured_at": "2026-11-09T03:50:47.065020+00:00",
+        "overall": {
+          "indicator": "none",
+          "description": "All Systems Operational"
+        },
+        "components": [],
+        "incidents": [
+          {
+            "id": "pyynvrm1vskw",
+            "name": "Increase in timeouts for some unauthenticated users",
+            "status": "resolved",
+            "updated_at": "2026-11-08T12:32:35.646Z"
+          },
+          {
+            "id": "pfbmpxxfq1cy",
+            "name": "Degraded performance for multiple GitHub services",
+            "status": "resolved",
+            "updated_at": "2026-11-06T00:20:49.369Z"
+          },
+          {
+            "id": "t89g2q1800fr",
+            "name": "Incident with Actions",
+            "status": "resolved",
+            "updated_at": "2026-11-05T17:42:35.455Z"
+          },
+          {
+            "id": "h02n9572mx9y",
+            "name": "Incident with Actions",
+            "status": "resolved",
+            "updated_at": "2026-11-07T01:10:18.506Z"
+          },
+          {
+            "id": "xr3myzj7ms51",
+            "name": "Incident with Actions and Pages",
+            "status": "resolved",
+            "updated_at": "2026-11-07T01:04:38.647Z"
+          }
+        ],
+        "matching_incidents_in_last_50": 50,
+        "note": "Chỉ tìm theo chuỗi trong 50 incident gần nhất; không tìm thấy không chứng minh không có sự cố.",
+        "source": "https://www.githubstatus.com"
+      }
+    },
+    {
+      "event": "model",
+      "step": 2,
+      "finish": "stop"
+    }
+  ],
+  "usage": [
+    {
+      "prompt_tokens": 406,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "completion_tokens": 20,
+      "total_tokens": 426
+    },
+    {
+      "prompt_tokens": 871,
+      "prompt_tokens_details": {
+        "cached_tokens": 425
+      },
+      "completion_tokens": 278,
+      "total_tokens": 1149
+    }
+  ]
+}

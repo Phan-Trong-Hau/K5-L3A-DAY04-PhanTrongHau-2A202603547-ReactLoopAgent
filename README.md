@@ -1,5 +1,10 @@
 # Lab: Xây dựng Status Investigation Agent
 
+**Bản bài làm: Phan Trọng Hậu — 2A202603547, L3A.**
+[Report tổng kết](REPORT.md) · [Phân tích bắt buộc](NOTES.md) · [Demo/test](DEMO.md) · [Tiến độ](reports/PROGRESS.md).
+Hai bộ eval đủ 22 case: **84.27 → 85.73/100**, token tăng 35%; các lỗi còn lại được ghi rõ.
+Bộ nộp sẵn sàng về kỹ thuật; chưa xác nhận trình bày trực tiếp/nộp LMS.
+
 > **Hình thức: Bài cá nhân.** Mỗi cá nhân tự làm, tự tạo repo riêng và tự nộp link lên LMS.
 >
 > **Tên repo nộp:** `K5-L3A-DAY04-[HoVaTen]-[MSSV]-ReactLoopAgent` hoặc `K5-L3B-DAY04-[HoVaTen]-[MSSV]-ReactLoopAgent` (thay `[HoVaTen]` và `[MSSV]`, bỏ cả dấu ngoặc vuông) · **Nơi nộp:** [aithucchien.vinuni.edu.vn](https://aithucchien.vinuni.edu.vn)
@@ -106,3 +111,18 @@ Trong bài lab, *agent loop* là vòng LLM → tool → kết quả. Khi dùng c
 | Thiết kế môi trường | [OpenAI: Harness engineering](https://openai.com/index/harness-engineering/) | Vai trò của tests, feedback và môi trường khi giao công việc cho coding agent. |
 
 Nếu thử workflow tự động, hãy đặt giới hạn lượt chạy hoặc chi phí, có điều kiện dừng và tự kiểm tra kết quả. Tests pass là bằng chứng hữu ích, nhưng vẫn cần xem code và đối chiếu yêu cầu. Đọc kỹ quyền và hướng dẫn của từng công cụ trước khi cài hoặc chạy plugin/hook.
+
+## Chạy thử bản bài làm với model local
+
+Xem [local/README.md](local/README.md) để cấu hình Ollama và chạy:
+
+```bash
+ollama create status-agent-local -f local/Modelfile
+python3 local/try_agent.py 'GitHub Actions có sự cố gì gần đây?'
+```
+
+Công cụ terminal hiển thị câu trả lời và trace tóm tắt; có thể lưu JSON với
+`--output reports/manual.json`. Đề không yêu cầu UI web. Báo cáo bắt buộc
+là [NOTES.md](NOTES.md), đã cập nhật từ hai bộ eval đủ 22 case.
+Xem [báo cáo so sánh CP6](reports/CP6_REPORT.md): 84.27 → 85.73/100;
+token tăng 35%, còn các hạn chế được ghi rõ trong report.

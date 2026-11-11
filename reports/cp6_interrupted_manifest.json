@@ -1,0 +1,66 @@
+{
+  "recorded_at": "2026-11-11T19:07:18.981115+07:00",
+  "agent_commit": "60308c3f44a5c894a79515fe34ecaa959647c95a",
+  "python": "3.12.3",
+  "command": "source local/env.sh && python3 evals/run_evals.py --provider openai --model status-agent-local --judge-provider openai --judge-model status-agent-local --max-steps 8 --workers 1 --output eval_after.json",
+  "endpoint": "http://localhost:11434/v1",
+  "local_model": {
+    "name": "status-agent-local:latest",
+    "model": "status-agent-local:latest",
+    "modified_at": "2026-11-11T17:12:27.420773914+07:00",
+    "size": 2497293464,
+    "digest": "dd771778b3c1a0aa5cf85aaddda75fb5c762720187fc448d6a89290cc51a0afb",
+    "details": {
+      "parent_model": "qwen3:4b-instruct",
+      "format": "gguf",
+      "family": "qwen3",
+      "families": [
+        "qwen3"
+      ],
+      "parameter_size": "4.0B",
+      "quantization_level": "Q4_K_M",
+      "context_length": 262144,
+      "embedding_length": 2560
+    },
+    "capabilities": [
+      "tools",
+      "thinking",
+      "completion"
+    ]
+  },
+  "model_parameters": "num_predict                    2048\nrepeat_penalty                 1\nstop                           \"<|im_start|>\"\nstop                           \"<|im_end|>\"\ntemperature                    0\ntop_k                          20\ntop_p                          0.8\nnum_ctx                        16384",
+  "parameters": {
+    "num_ctx": 16384,
+    "num_predict": 2048,
+    "temperature": 0,
+    "max_steps": 8,
+    "workers": 1,
+    "provider_timeout_seconds": 300
+  },
+  "sha256": {
+    "agent.py": "7c6a9e9aa0414e74ce3f0df548ea0462927d868cf4eb0fe59115025f994afd00",
+    "providers.py": "2fda2775fd0fd4974d68c812f02fa536116f1e800c27310f9be0f0256efa3942",
+    "status_tools.py": "015c860a077526580da312dd68560e4e2ace0df2f28a8743a72172e353ba8f3d",
+    "evals/run_evals.py": "61765fac6e12eec093641af953f8f6b3130244085570475bd858b9f7daf70da9",
+    "evals/cases.json": "3070f2dff24d9518b690213c280a318ff880931ef042603d7371f4280b930e34",
+    "evals/scenarios.py": "019de84221bc343299acf596cfddc033bd24fa064df0c30c03f36e75fe1c1ef2",
+    "evals/grading.py": "290d342cf40c49926bd635a8046ffb6106321821e3d68ce4286b08878f3c26bf",
+    "local/Modelfile": "90a189e355f0e106be12ffb00150b780b6c1c2150d55e56603944b8204366b60",
+    "fixtures/cloudflare.json": "896e753ad1ff6d67d5817781a487be597335dc5c124bbf0328098738bb202ab4",
+    "fixtures/github.json": "c4b72f0ab397fa72702908dc1d73aa893af66fff158b3b1bcabf223afb792ad7"
+  },
+  "eval_before_sha256": "1227c41a33b5cd638947f5454d66da67cd5d6e63d2cd52c260b2f208aee780db",
+  "model_digest_matches_cp4": true,
+  "protected_files_match_cp4": true,
+  "agent_matches_cp5": true,
+  "pause": {
+    "paused_at": "2026-11-11T19:44:58.698064+07:00",
+    "requested_by_user": true,
+    "pid": 157499,
+    "exec_session_id": 70089,
+    "mechanism": "SIGSTOP; resume with SIGCONT if same process still exists",
+    "completed_cases_in_log": 14,
+    "current_case": "H1",
+    "note": "Partial results remain in process memory. eval_after.json is only written when the full runner completes. One already submitted Ollama request may finish while evaluator is paused."
+  }
+}
