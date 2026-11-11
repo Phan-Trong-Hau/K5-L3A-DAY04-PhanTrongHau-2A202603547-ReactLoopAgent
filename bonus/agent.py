@@ -47,14 +47,22 @@ def retry_delay(observation, now=None):
 
 
 def compact(observation):
-    """Drop only the tool's explicitly designated distractor collection."""
-    if not isinstance(observation.get('distractors'), list):
-        return observation, 0
-    result = {k: v for k, v in observation.items() if k != 'distractors'}
-    count = len(observation['distractors'])
-    result['context_omitted'] = {'distractors': count}
-    return result, count
-
+    """Keep the documented result fields; discard unrelated administrative prose."""
+    allowed = {'provider', 'captured_at', 'overall', 'components', 'incidents', 'match_count',
+               'returned', 'note', 'source', 'ok', 'error', 'http_status', 'retry_after_seconds',
+               'retry_after', 'retriable', 'message', 'original_error', 'id', 'name', 'status',
+               'created_at', 'updated_at', 'updates', 'offset', 'total_updates', 'next_offset', 'url'}
+    omitted = {}
+    if isinstance(observation.get('distractors'), list):
+        omitted['distractors'] = len(observation['distractors'])
+    unexpected = set(observation) - allowed - {'distractors'}
+    if unexpected:
+        omitted['unexpected_fields'] = len(unexpected)
+    if not omitted:
+        return observation, {}
+    result = {k: v for k, v in observation.items() if k in allowed}
+    result['context_omitted'] = omitted
+    return result, omitted
 
 
 def repair_arguments(arguments, function):
@@ -77,6 +85,32 @@ def repair_arguments(arguments, function):
     return fixed
 
 
+
+def requested_work(question, schemas):
+    """Plan lookups using supported names and opaque IDs supplied by the user."""
+    properties = next(s['function']['parameters']['properties'] for s in schemas
+                      if s['function']['name'] == 'get_incident_details')
+    providers = properties['provider']['enum']
+    query = question.casefold()
+    mentions = [(m.start(), m.end(), p) for p in providers
+                for m in re.finditer(r'\b' + re.escape(p) + r'\b', question, flags=re.I)]
+    lookups = []
+    if any(word in query for word in ('incident', 'sự cố', 'timeline', 'chi tiết')):
+        for match in re.finditer(r'\b[A-Za-z0-9_-]{8,64}\b', question):
+            identifier = match.group()
+            if not (any(c.isalpha() for c in identifier) and any(c.isdigit() for c in identifier)):
+                continue
+            preceding = [m for m in mentions if 0 <= match.start() - m[1] <= 80]
+            if preceding:
+                lookup = {'provider': max(preceding)[2], 'incident_id': identifier, 'offset': 0, 'limit': 3}
+                if lookup not in lookups:
+                    lookups.append(lookup)
+    status = []
+    if not lookups and any(word in query for word in ('status', 'trạng thái', 'kiểm tra')):
+        status = sorted({m[2] for m in mentions})
+    return lookups, status
+
+
 def run_bonus_agent(question, provider, tools, max_steps=16):
     # Import after agent.py dispatch to avoid a module import cycle.
     from agent import _has_observed_source, _status_scope
@@ -87,10 +121,13 @@ def run_bonus_agent(question, provider, tools, max_steps=16):
     messages = [{'role': 'system', 'content': base_prompt}, {'role': 'user', 'content': question}]
     trace, usage, sources = [], [], set()
     failures, waits, unavailable, pages = {}, {}, {}, {}
-    incident_states = {}
+    incident_states, status_snapshots = {}, {}
     last_arguments = {}
+    requested_incidents, requested_status = requested_work(question, schemas)
+    attempted_incidents, attempted_status, latest_incidents = set(), set(), {}
+    needs_latest = not requested_incidents and any(t in question.casefold() for t in ('mới nhất', 'latest')) and any(t in question.casefold() for t in ('incident', 'sự cố'))
     needs_timeline = any(term in question.casefold() for term in
-                         ('timeline', 'dòng thời gian', 'toàn bộ cập nhật', 'mọi cập nhật', 'thông báo nào'))
+                         ('timeline', 'dòng thời gian', 'toàn bộ cập nhật', 'mọi cập nhật', 'thông báo nào', 'so sánh', 'đối chiếu'))
 
     def output(status, answer='', error=None):
         result = {'status': status, 'answer': answer, 'trace': trace, 'usage': usage}
@@ -112,7 +149,7 @@ def run_bonus_agent(question, provider, tools, max_steps=16):
     def execute_calls(calls, step):
         for call in calls:
             arguments = call['arguments']
-            key, executed = None, False
+            key, executed, scope = None, False, None
             try:
                 arguments = json.loads(arguments)
                 if not isinstance(arguments, dict):
@@ -142,6 +179,32 @@ def run_bonus_agent(question, provider, tools, max_steps=16):
                     except Exception as exc:
                         observation = {'ok': False, 'error': type(exc).__name__, 'message': str(exc)[:200]}
                     executed = True
+                    if scope and call['name'].endswith('_status'):
+                        attempted_status.add(scope)
+                        overall = observation.get('overall') or {}
+                        if not observation.get('error') and overall.get('indicator') in ('none', 'minor', 'major', 'critical', 'maintenance'):
+                            fact = {'provider': scope, 'indicator': overall['indicator']}
+                            try:
+                                date = datetime.fromisoformat(observation['captured_at'].replace('Z', '+00:00'))
+                                fact['captured_at'] = date.astimezone(timezone.utc).isoformat()
+                            except (ValueError, TypeError, KeyError):
+                                pass
+                            if re.fullmatch(r'https://[A-Za-z0-9.-]+/?', observation.get('source', '')):
+                                fact['source'] = observation['source']
+                            status_snapshots[scope] = fact
+                        if needs_latest and not observation.get('error'):
+                            candidates = []
+                            for item in observation.get('incidents', []):
+                                try:
+                                    date = datetime.fromisoformat(item['updated_at'].replace('Z', '+00:00'))
+                                    if re.fullmatch(r'[A-Za-z0-9_-]{1,100}', item['id']):
+                                        candidates.append((date.timestamp(), item['id']))
+                                except (ValueError, TypeError, KeyError):
+                                    pass
+                            if candidates:
+                                latest_incidents[scope] = {'provider': scope, 'incident_id': max(candidates)[1], 'offset': 0, 'limit': 3}
+                    if scope and call['name'] == 'get_incident_details' and isinstance(arguments.get('incident_id'), str):
+                        attempted_incidents.add((scope, arguments['incident_id']))
                     error = observation.get('error')
                     if error in ('RATE_LIMITED', 'INVALID_ARGUMENTS'):
                         count = (state['count'] if state else 0) + 1
@@ -165,7 +228,8 @@ def run_bonus_agent(question, provider, tools, max_steps=16):
             observation, omitted = compact(observation)
             if omitted:
                 trace.append({'event': 'context_compacted', 'step': step,
-                              'field': 'distractors', 'omitted_count': omitted})
+                              'field': 'distractors' if set(omitted) == {'distractors'} else 'unexpected_fields',
+                              'omitted_count': sum(omitted.values()), 'omitted': omitted})
             event = 'tool_blocked' if key and not executed else 'tool'
             trace.append({'event': event, 'step': step, 'name': call['name'],
                           'arguments': arguments, 'result': observation})
@@ -218,8 +282,13 @@ def run_bonus_agent(question, provider, tools, max_steps=16):
                        '\nTrạng thái truy cập do agent theo dõi (không phải status dịch vụ): ' +
                        json.dumps(context, ensure_ascii=False) +
                        '\nProvider CHƯA XÁC MINH ĐƯỢC: ' + ', '.join(sorted(unavailable)) +
+                       '\nStatus từng provider tại SNAPSHOT, giữ timestamp và nguồn riêng: ' +
+                       json.dumps(list(status_snapshots.values()), ensure_ascii=False) +
                        '\nTrạng thái incident tại SNAPSHOT do agent giữ qua mọi trang: ' +
                        json.dumps(list(incident_states.values()), ensure_ascii=False) +
+                       '\nIncident cần tra từ yêu cầu/updated_at (chưa phải bằng chứng tồn tại): ' +
+                       json.dumps(requested_incidents + list(latest_incidents.values()), ensure_ascii=False) +
+                       '\nNếu hỏi mới nhất, chỉ tổng hợp incident đã chọn thay vì liệt kê toàn bộ lịch sử. ' +
                        '\nMỗi trang updates được trả MỚI NHẤT TRƯỚC. Offset lớn là update CŨ HƠN, '
                        'không phải trạng thái mới vì được đọc sau. Khi status_at_snapshot=resolved, '
                        'phải nói incident đã giải quyết tại snapshot; thông báo upstream đang lỗi '
@@ -242,6 +311,29 @@ def run_bonus_agent(question, provider, tools, max_steps=16):
         if finish != 'stop':
             return output('error', error='Model returned tool_calls without calls')
         answer = response['message'].get('content') or ''
+        if (not requested_incidents and not requested_status
+                and any(term in question.casefold() for term in ('status', 'trạng thái', 'outage'))):
+            known = functions['get_incident_details']['parameters']['properties']['provider']['enum']
+            trace.append({'event': 'scope_limited', 'step': step, 'supported_providers': known})
+            return output('completed', 'Hệ thống chỉ hỗ trợ: ' + ', '.join(known) +
+                          '. Yêu cầu không chỉ định provider được hỗ trợ. Chưa có dữ liệu đã xác minh '
+                          'cho dịch vụ được hỏi, nên không thể xác nhận outage/trạng thái hoặc tạo URL '
+                          'incident chính xác. Cần nguồn chính thức hay công cụ phù hợp để kiểm tra.')
+        required = [{'name': 'get_incident_details', 'arguments': item}
+                    for item in requested_incidents + list(latest_incidents.values())
+                    if (item['provider'], item['incident_id']) not in attempted_incidents]
+        required += [{'name': f'get_{scope}_status', 'arguments': {}}
+                     for scope in requested_status if scope not in attempted_status]
+        if required:
+            scheduled = [{'id': f'agent-required-{step}-{i}', 'name': item['name'],
+                          'arguments': json.dumps(item['arguments'], ensure_ascii=False)}
+                         for i, item in enumerate(required)]
+            trace.append({'event': 'scheduled_required_lookup', 'step': step, 'calls': scheduled})
+            messages.append({'role': 'assistant', 'content': None, 'tool_calls': [
+                {'id': c['id'], 'type': 'function', 'function':
+                 {'name': c['name'], 'arguments': c['arguments']}} for c in scheduled]})
+            execute_calls(scheduled, step)
+            continue
         retryable = [{'tool': key[0], 'provider': key[1], 'error': state['error']}
                      for key, state in failures.items() if not state['blocked']]
         pending = pending_pages()

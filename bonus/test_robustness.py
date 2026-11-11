@@ -165,3 +165,79 @@ class BonusRobustnessTests(unittest.TestCase):
         self.assertEqual(result['status'], 'completed')
         self.assertEqual(tools.executed, 3)
         self.assertTrue(any(t['event'] == 'tool_blocked' for t in result['trace']))
+
+    def test_user_incident_id_cannot_be_dismissed_without_lookup(self):
+        tools = BonusTools(scenario='format_once')
+        args = {'provider': 'npm', 'incident_id': 'cc0t2r4403sy'}
+        url = tools.get_incident_details(**args)['url']
+        provider = ScriptedProvider([
+            call('status', 'get_npm_status', {'component': 'npm'}), final('Không tìm thấy'),
+            final('Không thể đọc'), final('Incident resolved. ' + url),
+        ])
+        result = run_agent('Xem chi tiết npm incident cc0t2r4403sy', provider, tools, max_steps=6)
+        self.assertEqual(result['status'], 'completed')
+        self.assertEqual(tools.calls[('get_incident_details', 'npm')], 2)
+        self.assertTrue(any(t['event'] == 'scheduled_required_lookup' for t in result['trace']))
+        self.assertTrue(any(t['event'] == 'scheduled_retry' for t in result['trace']))
+
+    def test_missing_requested_statuses_are_queried_from_registry(self):
+        tools = BonusTools()
+        provider = ScriptedProvider([final('Không có dữ liệu'), final('Đã kiểm tra GitHub và npm')])
+        result = run_agent('Kiểm tra status GitHub và npm', provider, tools, max_steps=3)
+        self.assertEqual(result['status'], 'completed')
+        self.assertEqual({t['name'] for t in result['trace'] if t['event'] == 'tool'},
+                         {'get_github_status', 'get_npm_status'})
+
+    def test_latest_incident_selection_uses_returned_timestamps(self):
+        tools = BonusTools(scenario='noisy')
+        response = call('vercel', 'get_vercel_status', {'component': 'Builds'})
+        second = call('npm', 'get_npm_status', {'component': 'package publishing'})
+        response['calls'] += second['calls']
+        response['message']['tool_calls'] += second['message']['tool_calls']
+        vurl = tools.get_incident_details('vercel', 'w661l7k3kf4p')['url']
+        nurl = tools.get_incident_details('npm', 'cc0t2r4403sy')['url']
+        provider = ScriptedProvider([response, final('Tất cả incident đều resolved'), final(vurl + ' ' + nurl)])
+        result = run_agent('Đối chiếu incident mới nhất của Vercel Builds và npm publishing', provider, tools, max_steps=4)
+        self.assertEqual(result['status'], 'completed')
+        ids = {t['arguments']['incident_id'] for t in result['trace']
+               if t['event'] == 'tool' and t['name'] == 'get_incident_details'}
+        self.assertEqual(ids, {'w661l7k3kf4p', 'cc0t2r4403sy'})
+
+    def test_unexpected_instructions_do_not_reach_model_observation(self):
+        tools = BonusTools(scenario='injection')
+        self.assertIn('external_notice', tools.status('npm'))
+        provider = ScriptedProvider([call('npm', 'get_npm_status', {}), final('Nguồn: https://status.npmjs.org')])
+        result = run_agent('Kiểm tra npm status', provider, tools)
+        observation = json.loads(provider.histories[1][-1]['content'])
+        self.assertNotIn('external_notice', observation)
+        self.assertEqual(observation['context_omitted'], {'unexpected_fields': 1})
+        self.assertEqual(result['status'], 'completed')
+
+    def test_unsupported_providers_cannot_receive_invented_status(self):
+        provider = ScriptedProvider([final('Linear và Slack đang outage https://example.invalid/fake')])
+        result = run_agent('Xác nhận Linear và Slack đang outage', provider, BonusTools())
+        self.assertEqual(result['status'], 'completed')
+        self.assertNotIn('https://example.invalid', result['answer'])
+        self.assertIn('Chưa có dữ liệu đã xác minh', result['answer'])
+        self.assertTrue(any(t['event'] == 'scope_limited' for t in result['trace']))
+
+    def test_user_supplied_identifier_case_is_preserved(self):
+        provider = ScriptedProvider([final('Không biết'), final('Không tìm thấy trong snapshot')])
+        result = run_agent('Xem chi tiết npm incident AbC12345Z', provider, BonusTools(), max_steps=3)
+        self.assertEqual(result['status'], 'completed')
+        call_event = next(t for t in result['trace'] if t['event'] == 'tool')
+        self.assertEqual(call_event['arguments']['incident_id'], 'AbC12345Z')
+        self.assertEqual(call_event['result']['error'], 'INCIDENT_NOT_FOUND')
+
+    def test_provider_snapshot_dates_are_kept_separately(self):
+        tools = BonusTools()
+        response = call('github', 'get_github_status', {})
+        other = call('npm', 'get_npm_status', {})
+        response['calls'] += other['calls']
+        response['message']['tool_calls'] += other['message']['tool_calls']
+        provider = ScriptedProvider([response, final('Đã kiểm tra')])
+        result = run_agent('Kiểm tra status GitHub và npm', provider, tools)
+        self.assertEqual(result['status'], 'completed')
+        prompt = provider.histories[1][0]['content']
+        self.assertIn(tools.status('github')['captured_at'], prompt)
+        self.assertIn(tools.status('npm')['captured_at'], prompt)

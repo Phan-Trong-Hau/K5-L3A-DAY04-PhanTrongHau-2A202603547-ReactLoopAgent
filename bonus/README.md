@@ -20,6 +20,12 @@ thực tế hôm nay. `--mode live` gọi public APIs thật và có thể gặp
 ## Các cơ chế được triển khai
 
 - **Registry:** 5 status tools riêng và `get_incident_details`, dùng nguyên schemas.
+- **Yêu cầu tra cứu:** nếu model định kết thúc trước khi tra ID user cung cấp hoặc
+  provider status được hỏi, agent lên lịch lookup theo registry. ID không được coi là tồn tại
+  trước khi có kết quả. Với yêu cầu incident mới nhất, chọn từ updated_at của kết quả status.
+  Parser dùng tên provider canonical và ID chữ/số gần tên provider, không phải semantic search.
+- **Scope:** câu hỏi status/outage không có provider nào được hỗ trợ sẽ nhận thông báo
+  thiếu khả năng xác minh, không dùng câu khẳng định/URL bịa do model sinh ra.
 - **Retry:** tối đa 3 lỗi liên tiếp cho mỗi tool/provider. Đọc Retry-After dạng số
   giây hoặc HTTP-date; chờ tối đa 5 giây, nếu cần lâu hơn thì dừng retry và báo thiếu
   dữ liệu. 429 giả lập có delay=0. Không coi 429 là outage.
@@ -38,9 +44,10 @@ thực tế hôm nay. `--mode live` gọi public APIs thật và có thể gặp
 - **Trạng thái xuyên trang:** giữ status incident tại snapshot và timestamp update mới nhất
   qua các trang. Offset lớn chứa update cũ hơn, không coi trang đọc cuối là trạng thái mới.
   Context không sao chép body/error prose thành system instructions.
-- **Context:** bỏ chỉ trường `distractors` được tools đánh dấu, lưu số lượng trong
-  `context_omitted` và event `context_compacted`; giữ status/incident/update/URL thật.
-  Trace là observation sau xử lý, không lưu lại nguyên danh sách nhiễu.
+- **Context:** chỉ giữ các field đã được tools định nghĩa, loại collection `distractors`
+  và các field ngoài hợp đồng dữ liệu. Lưu số lượng trong `context_omitted` và
+  `context_compacted`; giữ status/incident/update/URL. Trace là observation sau xử lý,
+  không lưu lại payload nhiễu/chỉ dẫn ngoài hợp đồng đã loại. Body hợp lệ vẫn được giữ.
 - **Sources:** final phải có các URL incident đã đọc thành công; sửa trong cùng budget.
   Status-only sources được hướng dẫn trong prompt, chưa có semantic validator cho mọi claim.
 - **Boundaries:** registry chỉ hỗ trợ 5 providers, không bịa Linear/Slack hoặc theo
@@ -67,8 +74,13 @@ sau khi full eval hoàn tất; không cộng điểm eval bài chính trực ti�
 
 ## Giới hạn
 
-Pagination đầy đủ chỉ được yêu cầu khi câu hỏi nói rõ timeline/thông báo cũ; query
-scope khác vẫn phụ thuộc model chọn trang phù hợp. Update body có thể bị cắt ngay
+Pagination đầy đủ được yêu cầu cho timeline/thông báo cũ và so sánh/đối chiếu;
+query scope khác vẫn phụ thuộc model chọn trang phù hợp. Parser lookup dùng heuristic
+canonical names/ID gần trước đó (80 ký tự), không bao phủ mọi cách diễn đạt/alias. Update body có thể bị cắt ngay
 trong tool, đọc đủ trang không khôi phục phần body đó. Source presence không chứng
 minh mọi claim đúng. Retry và revision có thể làm hết max_steps, khi đó trả max_steps.
 Model/judge dùng chung trọng số; điểm là ước lượng cần đọc cùng trace.
+
+Filtering không bảo đảm chống mọi prompt injection: chỉ dẫn nằm trong body/field hợp lệ
+vẫn phụ thuộc model và quy tắc bằng chứng. Context dùng metadata typed/normalized,
+không đẩy body lên system instructions.
