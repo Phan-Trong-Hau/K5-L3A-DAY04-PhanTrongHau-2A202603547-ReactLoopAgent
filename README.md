@@ -106,3 +106,16 @@ Trong bài lab, *agent loop* là vòng LLM → tool → kết quả. Khi dùng c
 | Thiết kế môi trường | [OpenAI: Harness engineering](https://openai.com/index/harness-engineering/) | Vai trò của tests, feedback và môi trường khi giao công việc cho coding agent. |
 
 Nếu thử workflow tự động, hãy đặt giới hạn lượt chạy hoặc chi phí, có điều kiện dừng và tự kiểm tra kết quả. Tests pass là bằng chứng hữu ích, nhưng vẫn cần xem code và đối chiếu yêu cầu. Đọc kỹ quyền và hướng dẫn của từng công cụ trước khi cài hoặc chạy plugin/hook.
+
+## Chạy thử bản bài làm với model local
+
+Xem [local/README.md](local/README.md) để cấu hình Ollama và chạy:
+
+```bash
+ollama create status-agent-local -f local/Modelfile
+python3 local/try_agent.py 'GitHub Actions có sự cố gì gần đây?'
+```
+
+Công cụ terminal hiển thị câu trả lời và trace tóm tắt; có thể lưu JSON với
+`--output reports/manual.json`. Đề không yêu cầu UI web. Báo cáo bắt buộc
+là [NOTES.md](NOTES.md), sẽ hoàn thiện sau hai lần eval đầy đủ.
