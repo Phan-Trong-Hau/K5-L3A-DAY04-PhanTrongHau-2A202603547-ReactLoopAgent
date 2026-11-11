@@ -1,0 +1,10 @@
+test_tool_result_is_returned_with_id (test_lab.LoopTests.test_tool_result_is_returned_with_id) ... ok
+test_multiple_tool_calls (test_lab.LoopTests.test_multiple_tool_calls) ... ok
+test_two_tools_and_final_with_real_snapshot (test_lab.FullTrajectoryTests.test_two_tools_and_final_with_real_snapshot) ... ok
+test_complete_assistant_message_precedes_all_tool_results (test_cp2_contract.ConversationContractTests.test_complete_assistant_message_precedes_all_tool_results) ... ok
+test_final_answer_preserves_per_request_usage_and_result_contract (test_cp2_contract.ConversationContractTests.test_final_answer_preserves_per_request_usage_and_result_contract) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.036s
+
+OK

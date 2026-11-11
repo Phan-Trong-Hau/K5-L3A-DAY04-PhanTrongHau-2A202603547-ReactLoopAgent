@@ -1,8 +1,8 @@
+"""Agent loop tự viết: model → tools → observations → model."""
+
 import json
 
 from status_tools import SCHEMAS
-
-"""Bài tập chính: hiện chưa có lời giải. Xem GUIDE.md."""
 
 SYSTEM_PROMPT = '''Bạn là trợ lý điều tra trạng thái GitHub và Cloudflare.
 Dùng tools trước khi khẳng định về trạng thái. Phân biệt incident hiện tại và lịch sử,
@@ -28,6 +28,7 @@ def run_agent(question, provider, tools, max_steps=6):
     for step in range(1, max_steps + 1):
         try:
             response = provider.complete(messages, getattr(tools, 'schemas', SCHEMAS))
+            # Preserve the assistant message, including every tool call and its ID.
             messages.append(response['message'])
             usage.append(response.get('usage', {}))
             calls = response.get('calls', [])
@@ -40,6 +41,7 @@ def run_agent(question, provider, tools, max_steps=6):
         if finish not in ('stop', 'tool_calls'):
             return result('error', error=f'Model stopped unexpectedly: {finish}')
         if calls:
+            # Return all observations before requesting the next model response.
             for call in calls:
                 arguments = call['arguments']
                 try:

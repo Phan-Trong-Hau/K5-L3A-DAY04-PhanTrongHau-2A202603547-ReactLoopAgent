@@ -3,9 +3,9 @@
 Họ và tên: Phan Trong Hau
 MSSV: 2A202603547
 
-Tiến độ từng CP: [reports/PROGRESS.md](reports/PROGRESS.md). CP1 đã hoàn tất kỹ thuật.
+Tiến độ từng CP: [reports/PROGRESS.md](reports/PROGRESS.md). CP1 và CP2 đã hoàn tất kỹ thuật.
 
-**Trạng thái: đang thực hiện.** Hiện chỉ có smoke test E2; chưa có hai bộ eval
+**Trạng thái: đang thực hiện.** Hiện có smoke test E2 và kiểm tra chạy GitHub Actions của CP2; chưa có hai bộ eval
 đầy đủ 22 case. Nội dung dưới đây ghi nhận lỗi thật, không thay thế báo cáo cuối.
 
 ## 1. Case được chọn
