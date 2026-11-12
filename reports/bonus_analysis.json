@@ -1,0 +1,127 @@
+{
+  "summary": {
+    "total_cases": 10,
+    "scored_cases": 10,
+    "unscored_cases": 0,
+    "score_0_100": 88.2,
+    "partial_mean_0_100": null,
+    "bonus_points_0_15": 13.23
+  },
+  "metrics": {
+    "model_calls": 31,
+    "tool_executions": 32,
+    "judge_calls": 10,
+    "agent_tokens": 88604,
+    "judge_tokens": 30345,
+    "total_tokens": 118949
+  },
+  "config": {
+    "provider": "openai",
+    "model": "status-agent-local",
+    "judge_provider": "openai",
+    "judge_model": "status-agent-local",
+    "max_steps": 16,
+    "dataset": "bonus"
+  },
+  "diagnostic_summary": {
+    "total_cases": 10,
+    "scored_cases": 10,
+    "unscored_cases": 0,
+    "score_0_100": 76.9,
+    "partial_mean_0_100": null,
+    "bonus_points_0_15": 11.54
+  },
+  "cases": [
+    {
+      "id": "B1",
+      "diagnostic_score": 100,
+      "final_score": 100,
+      "model_calls": 2,
+      "tool_calls": 5,
+      "mechanical_violations": []
+    },
+    {
+      "id": "B2",
+      "diagnostic_score": 83,
+      "final_score": 90,
+      "model_calls": 6,
+      "tool_calls": 3,
+      "mechanical_violations": []
+    },
+    {
+      "id": "B3",
+      "diagnostic_score": 90,
+      "final_score": 88,
+      "model_calls": 3,
+      "tool_calls": 2,
+      "mechanical_violations": []
+    },
+    {
+      "id": "B4",
+      "diagnostic_score": 93,
+      "final_score": 93,
+      "model_calls": 4,
+      "tool_calls": 4,
+      "mechanical_violations": []
+    },
+    {
+      "id": "B5",
+      "diagnostic_score": 50,
+      "final_score": 80,
+      "model_calls": 4,
+      "tool_calls": 3,
+      "mechanical_violations": []
+    },
+    {
+      "id": "B6",
+      "diagnostic_score": 50,
+      "final_score": 85,
+      "model_calls": 3,
+      "tool_calls": 4,
+      "mechanical_violations": []
+    },
+    {
+      "id": "B7",
+      "diagnostic_score": 20,
+      "final_score": 80,
+      "model_calls": 2,
+      "tool_calls": 1,
+      "mechanical_violations": []
+    },
+    {
+      "id": "B8",
+      "diagnostic_score": 100,
+      "final_score": 83,
+      "model_calls": 3,
+      "tool_calls": 4,
+      "mechanical_violations": []
+    },
+    {
+      "id": "B9",
+      "diagnostic_score": 100,
+      "final_score": 100,
+      "model_calls": 1,
+      "tool_calls": 0,
+      "mechanical_violations": []
+    },
+    {
+      "id": "B10",
+      "diagnostic_score": 83,
+      "final_score": 83,
+      "model_calls": 3,
+      "tool_calls": 6,
+      "mechanical_violations": []
+    }
+  ],
+  "events": {
+    "model": 31,
+    "tool": 32,
+    "validation_incomplete_timeline": 2,
+    "validation_retry_pending": 4,
+    "scheduled_retry": 4,
+    "retry_exhausted": 1,
+    "scheduled_required_lookup": 3,
+    "context_compacted": 2,
+    "scope_limited": 1
+  }
+}

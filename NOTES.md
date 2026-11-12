@@ -7,7 +7,8 @@ Tiến độ từng CP: [reports/PROGRESS.md](reports/PROGRESS.md).
 **CP1–CP6 hoàn tất; CP7 đã chuẩn bị/kiểm tra bộ nộp và demo replay, chờ trình bày trực tiếp/nộp LMS.**
 Báo cáo baseline: [reports/CP4_REPORT.md](reports/CP4_REPORT.md).
 Báo cáo cải tiến: [reports/CP5_REPORT.md](reports/CP5_REPORT.md).
-So sánh cuối: [reports/CP6_REPORT.md](reports/CP6_REPORT.md).
+So sánh cuối bài chính: [reports/CP6_REPORT.md](reports/CP6_REPORT.md).
+Bonus: [reports/BONUS_REPORT.md](reports/BONUS_REPORT.md), đủ 10 case, 88.2/100 → 13.23/15 tham khảo.
 
 ## 1. Case được chọn
 
@@ -162,3 +163,27 @@ chưa xác nhận trình bày trực tiếp hoặc nộp LMS.
   hoặc bắt buộc model đọc mọi incident liên quan. Kết quả A6 minh họa giới hạn này.
 - Lượt bị ngắt không giữ đủ usage nên chưa tính được toàn bộ chi phí thử nghiệm;
   không có phép đo điện/phần cứng để quy đổi token local ra tiền.
+
+
+### Bonus — đã hoàn tất triển khai và full eval
+
+- `bonus/agent.py` xử lý 5 provider tools, Retry-After/budget 3 lỗi, retry và sửa
+  integer theo schema, obligations cho provider/ID được hỏi, pagination, metadata
+  snapshot xuyên trang, lọc field ngoài hợp đồng và từ chối provider ngoài registry.
+- Lời gọi do agent lên lịch có event `scheduled_retry`/`scheduled_required_lookup`
+  và tool-call IDs riêng; không ghi giả là model đã sinh call đó.
+- Giữ nguyên core đã eval tại `reports/reference/agent_cp6.py`. `agent.py` chỉ thêm
+  dispatcher; loại block đó tái tạo đúng hash CP6. Hai eval core giữ nguyên bytes.
+- Full diagnostic bonus 76.9/100 (11.54/15) → lượt cuối **88.2/100 (13.23/15)**;
+  10/10 scored, không unscored, mọi mechanical checks pass. Không ghép điểm khác
+  phiên bản và không sửa grade/fixtures/expected.
+- 61 tests chính + 22 tests bonus pass. Lượt cuối dùng 31 model calls, 32 tool
+  executions, 10 judge calls; 88,604 token agent + 30,345 judge = 118,949 token.
+- Lỗi còn lại: B8 diễn giải thời gian/nhân quả quá mức; B10 sai target URL DigitalOcean,
+  quá khẳng định Cloudflare/CI ổn định và thiếu timestamp riêng; B7 sai mô tả lịch sử.
+  Judge cũng chấm thiếu chính xác về shortlink và giới hạn timeline. Không coi 13.23
+  là bảo đảm chất lượng hay điểm giảng viên cuối cùng.
+- Filtering unknown top-level fields không bảo đảm chống mọi injection trong body
+  hợp lệ. Parser nghĩa vụ lookup dùng heuristic canonical name/opaque ID, có giới hạn alias.
+- Điểm bonus được quy đổi riêng bằng grader gốc, không cộng trực tiếp với 85.73 điểm
+  eval core thành điểm lab. Xem report bonus và `eval_bonus.json` để đối chiếu evidence.

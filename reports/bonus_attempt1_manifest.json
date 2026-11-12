@@ -1,0 +1,68 @@
+{
+  "recorded_at": "2026-11-11T23:41:27.349004+07:00",
+  "base_commit": "0e4732bdfb3bceacc31dc755c4bc7b726ebaa6eb",
+  "command": "source local/env.sh && python3 local/run_checkpoint_evals.py --bonus",
+  "config": {
+    "provider": "openai",
+    "model": "status-agent-local",
+    "judge_provider": "openai",
+    "judge_model": "status-agent-local",
+    "max_steps": 16,
+    "dataset": "bonus"
+  },
+  "sha256": {
+    "agent.py": "0f0a03433ffcdd89259a450b11e5b5f04bce6f27d3cba7a5da1037bd1aa54d87",
+    "providers.py": "2fda2775fd0fd4974d68c812f02fa536116f1e800c27310f9be0f0256efa3942",
+    "status_tools.py": "015c860a077526580da312dd68560e4e2ace0df2f28a8743a72172e353ba8f3d",
+    "evals/run_evals.py": "61765fac6e12eec093641af953f8f6b3130244085570475bd858b9f7daf70da9",
+    "evals/cases.json": "3070f2dff24d9518b690213c280a318ff880931ef042603d7371f4280b930e34",
+    "evals/scenarios.py": "019de84221bc343299acf596cfddc033bd24fa064df0c30c03f36e75fe1c1ef2",
+    "evals/grading.py": "290d342cf40c49926bd635a8046ffb6106321821e3d68ce4286b08878f3c26bf",
+    "local/Modelfile": "90a189e355f0e106be12ffb00150b780b6c1c2150d55e56603944b8204366b60",
+    "fixtures/github.json": "c4b72f0ab397fa72702908dc1d73aa893af66fff158b3b1bcabf223afb792ad7",
+    "fixtures/cloudflare.json": "896e753ad1ff6d67d5817781a487be597335dc5c124bbf0328098738bb202ab4",
+    "bonus/agent.py": "fa93fc8bf05b6273959328f126d575ea9b3e9a02eb1225637d19c4f9a0aabe43",
+    "bonus/tools.py": "1a552c6e1aba591a400706852a6df8fed6901ec4301c1ad7eda12eee452bcf80",
+    "bonus/cases.json": "20aee5e8aec1a1fd6d75bd5c310d1a4d59a3865ba9fdcab236a1da8db5d9bf8f",
+    "bonus/fixtures/digitalocean.json": "6aba084edb60100c37bc02c022584202f7355916e872ec211f61d31bba69641a",
+    "bonus/fixtures/npm.json": "9d61a1776c7406001222a941d5873364c743b170f8cb31c2d8bb8fd3b5795dad",
+    "bonus/fixtures/vercel.json": "8f84793557582fa81bdf47b45d24187de813f84ff71beabb443a820322381a4f"
+  },
+  "model": {
+    "name": "status-agent-local:latest",
+    "model": "status-agent-local:latest",
+    "modified_at": "2026-11-11T17:12:27.420773914+07:00",
+    "size": 2497293464,
+    "digest": "dd771778b3c1a0aa5cf85aaddda75fb5c762720187fc448d6a89290cc51a0afb",
+    "details": {
+      "parent_model": "qwen3:4b-instruct",
+      "format": "gguf",
+      "family": "qwen3",
+      "families": [
+        "qwen3"
+      ],
+      "parameter_size": "4.0B",
+      "quantization_level": "Q4_K_M",
+      "context_length": 262144,
+      "embedding_length": 2560
+    },
+    "capabilities": [
+      "tools",
+      "thinking",
+      "completion"
+    ]
+  },
+  "core_reference": "reports/reference/agent_cp6.py",
+  "core_eval_before_sha256": "1227c41a33b5cd638947f5454d66da67cd5d6e63d2cd52c260b2f208aee780db",
+  "core_eval_after_sha256": "1f13a49964335ef61ed0eda9a8ab122ed13aa40906528943debe2492932b432c",
+  "original_core_body_preserved": true,
+  "protected_tools_fixtures_grading_unchanged": true,
+  "retry_policy": {
+    "max_consecutive_failures_per_tool_provider": 3,
+    "max_wait_seconds_per_retry": 5
+  },
+  "tests": {
+    "main_passed": 61,
+    "bonus_passed": 11
+  }
+}

@@ -337,10 +337,26 @@ link LMS bằng tài khoản cá nhân. Phiên này không có browser hay tích
 
 Dùng `python3 local/check_submission.py` để kiểm tra lại, và
 `python3 local/demo.py --case A8 --version after --summary-only` để xem trace nhiều bước.
-Bài chính sẵn sàng về kỹ thuật; bonus 15 điểm chưa thực hiện bộ eval riêng.
+Tại mốc CP7, bài chính sẵn sàng; bonus được hoàn tất ở phần cập nhật sau bên dưới.
 
 
 Xác nhận bàn giao GitHub: PR #1 đã merge vào `main`; đã mở public main không đăng nhập
 và kiểm tra code, hai eval JSON, notes/report/demo, hashes dữ liệu khớp bản đã eval.
 Bằng chứng: [cp7_remote_verification.json](cp7_remote_verification.json).
 Trạng thái LMS và trình bày trực tiếp vẫn chưa xác nhận.
+
+
+## Bonus — hoàn tất triển khai và 10 case
+
+Kết quả cuối: **88.2/100 → 13.23/15 tham khảo**, 10/10 scored, không mechanical
+violations. Full diagnostic trước sửa 76.9 → 88.2; giữ riêng các lượt chẩn đoán,
+không ghép điểm. 61 tests chính + 22 tests bonus pass.
+
+Đã có retry bounded/Retry-After, fallback sửa arguments, lookup obligations, đọc
+đủ trang khi cần, lọc distractors/unknown fields và giới hạn provider. Code core
+và hai eval core được giữ nguyên qua archive/hash tests, chỉ thêm dispatcher.
+
+[Report bonus](BONUS_REPORT.md), [eval_bonus.json](../eval_bonus.json),
+[manifest](bonus_run_manifest.json), [kiểm tra bộ nộp](bonus_submission_checks.txt).
+Lỗi còn lại gồm claim/URL/timestamp B10 và suy diễn trong B8; không coi điểm judge
+là kết quả hoàn hảo. LMS/demo trực tiếp vẫn chờ người học xác nhận.

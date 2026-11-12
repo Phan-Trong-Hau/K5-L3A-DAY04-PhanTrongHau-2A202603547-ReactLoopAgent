@@ -60,8 +60,8 @@ python3 -m unittest discover -s tests -v
 python3 -m unittest discover -s bonus -p 'test_*.py' -v
 ```
 
-Kết quả đã kiểm tra: 59 tests chính và 3 tests tương thích bonus pass.
-3 tests bonus này không phải bộ eval bonus 10 case; chưa có điểm bonus.
+Kết quả hiện tại: 61 tests chính và 22 tests bonus pass. Full eval bonus đủ
+10 case, 88.2/100 và 13.23/15 điểm tham khảo.
 
 ## Những câu cần giải thích được
 
@@ -75,3 +75,20 @@ Kết quả đã kiểm tra: 59 tests chính và 3 tests tương thích bonus pa
 - **Giới hạn dữ liệu:** tìm chuỗi trong 50 incident, tối đa 5 matches, updates có thể rút gọn;
   snapshot không phải status hôm nay.
 - **Vì sao không sửa tiếp code ở CP7:** để code nộp đúng bản đã chạy `eval_after.json`.
+
+
+## Demo bonus
+
+```bash
+python3 local/demo.py --case B2 --version bonus --summary-only
+python3 local/demo.py --case B4 --version bonus --summary-only
+python3 local/demo.py --case B6 --version bonus --summary-only
+python3 local/check_submission.py --bonus
+```
+
+B2: nhiều trang. B4: API 429 tối đa 3 executions rồi partial failure. B6: bỏ 160
+record nhiễu và đọc hai incident mới nhất. `scheduled_retry`/`scheduled_required_lookup`
+là call do agent lên lịch theo budget/yêu cầu/schema, không phải model sinh.
+
+Chạy mới với model: `python3 local/try_agent.py --bonus 'Kiểm tra Vercel và npm'`.
+Đọc [report bonus](reports/BONUS_REPORT.md) để trình bày cả lỗi còn lại, đặc biệt B10.

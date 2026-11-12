@@ -2,7 +2,8 @@
 
 **Bản bài làm: Phan Trọng Hậu — 2A202603547, L3A.**
 [Report tổng kết](REPORT.md) · [Phân tích bắt buộc](NOTES.md) · [Demo/test](DEMO.md) · [Tiến độ](reports/PROGRESS.md).
-Hai bộ eval đủ 22 case: **84.27 → 85.73/100**, token tăng 35%; các lỗi còn lại được ghi rõ.
+Bài chính đủ 22 case mỗi bộ: **84.27 → 85.73/100**. Bonus đủ 10 case:
+**88.2/100 → 13.23/15 tham khảo**. [Report bonus](reports/BONUS_REPORT.md); các lỗi còn lại được ghi rõ.
 Bộ nộp sẵn sàng về kỹ thuật; chưa xác nhận trình bày trực tiếp/nộp LMS.
 
 > **Hình thức: Bài cá nhân.** Mỗi cá nhân tự làm, tự tạo repo riêng và tự nộp link lên LMS.

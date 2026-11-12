@@ -1,0 +1,19 @@
+REPLAY EVIDENCE ĐÃ LƯU — không phải lần chạy model mới.
+
+eval_bonus.json / B6 / status=completed / score=85
+Câu hỏi: Kiểm tra Vercel Builds và npm package publishing, đối chiếu incident mới nhất cho mỗi dịch vụ. Dữ liệu có nhiều mục không liên quan: nêu trạng thái incident, phạm vi, timestamp và nguồn, không tạo quan hệ nhân quả.
+Model calls: 3
+Step 1 / model {"finish": "tool_calls"}
+Step 1 / context_compacted {"field": "distractors", "omitted_count": 160, "omitted": {"distractors": 160}}
+Step 1 / tool get_vercel_status {"component": "Builds"}
+  Evidence: {"provider": "vercel", "overall": {"indicator": "none", "description": "All Systems Operational"}, "source": "https://www.vercel-status.com", "captured_at": "2026-11-10T14:45:50.457875+00:00"}
+Step 1 / tool get_npm_status {"component": "package publishing"}
+  Evidence: {"provider": "npm", "overall": {"indicator": "none", "description": "All Systems Operational"}, "source": "https://status.npmjs.org", "captured_at": "2026-11-10T14:45:51.077785+00:00"}
+Step 2 / model {"finish": "stop"}
+Step 2 / scheduled_required_lookup {"calls": [{"id": "agent-required-2-0", "name": "get_incident_details", "arguments": "{\"provider\": \"vercel\", \"incident_id\": \"w661l7k3kf4p\", \"offset\": 0, \"limit\": 3}"}, {"id": "agent-required-2-1", "name": "get_incident_details", "arguments": "{\"provider\": \"npm\", \"incident_id\": \"cc0t2r4403sy\", \"offset\": 0, \"limit\": 3}"}]}
+Step 2 / tool get_incident_details {"provider": "vercel", "incident_id": "w661l7k3kf4p", "offset": 0, "limit": 3}
+  Evidence: {"provider": "vercel", "ok": true, "id": "w661l7k3kf4p", "status": "resolved", "url": "https://stspg.io/y6fmg7s9m5t2", "captured_at": "2026-11-10T14:45:50.457875+00:00"}
+Step 2 / tool get_incident_details {"provider": "npm", "incident_id": "cc0t2r4403sy", "offset": 0, "limit": 3}
+  Evidence: {"provider": "npm", "ok": true, "id": "cc0t2r4403sy", "status": "resolved", "url": "https://stspg.io/tf64mpt4xjfv", "captured_at": "2026-11-10T14:45:51.077785+00:00"}
+Step 3 / model {"finish": "stop"}
+Mechanical checks: {"violations": [], "score_cap": 100, "tool_calls": 4, "tool_steps": 2}

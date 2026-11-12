@@ -14,7 +14,8 @@ python3 local/try_agent.py --bonus 'Kiểm tra GitHub, Cloudflare, Vercel, npm v
 python3 local/try_agent.py --bonus --output reports/manual_bonus.json 'Đọc timeline Vercel incident sps6n39gm4sg'
 ```
 
-Mặc định bonus 16 model steps, bài chính vẫn 6. Snapshot không đại diện status
+Trong `local/try_agent.py`, bonus mặc định 16 model steps, bài chính 6. Với
+`run.py --bonus`, đặt rõ `--max-steps 16`. Snapshot không đại diện status
 thực tế hôm nay. `--mode live` gọi public APIs thật và có thể gặp rate limit.
 
 ## Các cơ chế được triển khai
@@ -70,7 +71,7 @@ python3 evals/run_evals.py --bonus --output eval_results_bonus_retry.json
 
 Không ghi đè `eval_bonus.json` khi chỉ chạy thử; chọn output/checkpoint riêng.
 Chỉ quy đổi điểm /15 khi đủ 10 case được chấm. Xem `reports/BONUS_REPORT.md`
-sau khi full eval hoàn tất; không cộng điểm eval bài chính trực tiếp vào điểm bonus.
+(full eval đã hoàn tất: 88.2/100, quy đổi 13.23/15 tham khảo); không cộng điểm eval bài chính trực tiếp vào điểm bonus.
 
 ## Giới hạn
 
