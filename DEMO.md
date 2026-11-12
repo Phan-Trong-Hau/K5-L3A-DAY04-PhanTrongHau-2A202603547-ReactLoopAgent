@@ -55,7 +55,7 @@ Lệnh này có gọi model, có thể mất vài phút; mặc định dùng sna
 ## Tự kiểm tra trước khi nộp
 
 ```bash
-python3 local/check_submission.py
+python3 local/check_submission.py --bonus
 python3 -m unittest discover -s tests -v
 python3 -m unittest discover -s bonus -p 'test_*.py' -v
 ```
@@ -74,7 +74,9 @@ Kết quả hiện tại: 61 tests chính và 22 tests bonus pass. Full eval bon
   trong budget. Hết budget trả `max_steps`; không ép nguồn khi chưa đọc incident thành công.
 - **Giới hạn dữ liệu:** tìm chuỗi trong 50 incident, tối đa 5 matches, updates có thể rút gọn;
   snapshot không phải status hôm nay.
-- **Vì sao không sửa tiếp code ở CP7:** để code nộp đúng bản đã chạy `eval_after.json`.
+- **Provenance sau bonus:** logic core được giữ byte-for-byte qua reference/hash test;
+  agent.py có thêm dispatcher và bonus/agent.py được eval riêng. Không nói toàn file
+  agent.py hiện tại còn nguyên hash CP6.
 
 
 ## Demo bonus

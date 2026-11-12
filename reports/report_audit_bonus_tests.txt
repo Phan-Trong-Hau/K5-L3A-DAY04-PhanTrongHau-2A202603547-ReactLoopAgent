@@ -1,0 +1,27 @@
+test_429_observation_returns_to_model (test_agent.BonusAgentTests.test_429_observation_returns_to_model) ... ok
+test_bonus_schemas_and_system_prompt (test_agent.BonusAgentTests.test_bonus_schemas_and_system_prompt) ... ok
+test_invalid_arguments_observation_returns_to_model (test_agent.BonusAgentTests.test_invalid_arguments_observation_returns_to_model) ... ok
+test_agent_schedules_bounded_retry_when_model_tries_to_stop (test_robustness.BonusRobustnessTests.test_agent_schedules_bounded_retry_when_model_tries_to_stop) ... ok
+test_format_error_cannot_be_abandoned_before_retry (test_robustness.BonusRobustnessTests.test_format_error_cannot_be_abandoned_before_retry) ... ok
+test_honors_short_retry_after_before_next_execution (test_robustness.BonusRobustnessTests.test_honors_short_retry_after_before_next_execution) ... ok
+test_incomplete_timeline_at_budget_limit_is_not_completed (test_robustness.BonusRobustnessTests.test_incomplete_timeline_at_budget_limit_is_not_completed) ... ok
+test_latest_incident_selection_uses_returned_timestamps (test_robustness.BonusRobustnessTests.test_latest_incident_selection_uses_returned_timestamps) ... ok
+test_long_retry_after_stops_without_busy_retry (test_robustness.BonusRobustnessTests.test_long_retry_after_stops_without_busy_retry) ... ok
+test_missing_requested_statuses_are_queried_from_registry (test_robustness.BonusRobustnessTests.test_missing_requested_statuses_are_queried_from_registry) ... ok
+test_mixed_retry_errors_share_one_failure_budget (test_robustness.BonusRobustnessTests.test_mixed_retry_errors_share_one_failure_budget) ... ok
+test_noise_is_compacted_without_losing_incident_evidence (test_robustness.BonusRobustnessTests.test_noise_is_compacted_without_losing_incident_evidence) ... ok
+test_persistent_429_executes_at_most_three_times (test_robustness.BonusRobustnessTests.test_persistent_429_executes_at_most_three_times) ... ok
+test_provider_snapshot_dates_are_kept_separately (test_robustness.BonusRobustnessTests.test_provider_snapshot_dates_are_kept_separately) ... ok
+test_retry_after_seconds_dates_and_invalid_values (test_robustness.BonusRobustnessTests.test_retry_after_seconds_dates_and_invalid_values) ... ok
+test_scheduled_argument_repair_keeps_identifiers_and_uses_schema (test_robustness.BonusRobustnessTests.test_scheduled_argument_repair_keeps_identifiers_and_uses_schema) ... ok
+test_snapshot_status_and_latest_date_survive_reading_older_pages (test_robustness.BonusRobustnessTests.test_snapshot_status_and_latest_date_survive_reading_older_pages) ... ok
+test_timeline_gate_requests_missing_pages_before_completion (test_robustness.BonusRobustnessTests.test_timeline_gate_requests_missing_pages_before_completion) ... ok
+test_unexpected_instructions_do_not_reach_model_observation (test_robustness.BonusRobustnessTests.test_unexpected_instructions_do_not_reach_model_observation) ... ok
+test_unsupported_providers_cannot_receive_invented_status (test_robustness.BonusRobustnessTests.test_unsupported_providers_cannot_receive_invented_status) ... ok
+test_user_incident_id_cannot_be_dismissed_without_lookup (test_robustness.BonusRobustnessTests.test_user_incident_id_cannot_be_dismissed_without_lookup) ... ok
+test_user_supplied_identifier_case_is_preserved (test_robustness.BonusRobustnessTests.test_user_supplied_identifier_case_is_preserved) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.035s
+
+OK

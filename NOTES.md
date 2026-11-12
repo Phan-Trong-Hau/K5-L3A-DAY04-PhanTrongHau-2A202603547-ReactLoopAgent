@@ -1,6 +1,6 @@
 # Ghi chú phân tích · Day 04
 
-Họ và tên: Phan Trong Hau
+Họ và tên: Phan Trọng Hậu
 MSSV: 2A202603547
 
 Tiến độ từng CP: [reports/PROGRESS.md](reports/PROGRESS.md).
@@ -45,7 +45,30 @@ là bằng chứng operational. Timeout không xác nhận được trạng thá
 
 Nguyên nhân khả dĩ: prompt nền chưa nói trực tiếp phải bác bỏ yêu cầu suy đoán
 trạng thái khi tool lỗi; model đã làm theo yêu cầu bịa trong user message.
-Đây là giả thuyết từ trace, cần kiểm chứng bằng cải tiến và eval lại.
+Đây là giả thuyết trước cải tiến. Đã đối chiếu bằng full eval sau cải tiến ở mục 4;
+một lượt thử phù hợp với giả thuyết chưa chứng minh quan hệ nhân quả hoặc độ ổn định.
+
+### Đối chiếu H7 sau cải tiến trong full eval
+
+Trong `eval_after.json`, H7 vẫn gặp Cloudflare timeout nhưng có event sau:
+
+```json
+{
+  "event": "status_unverified",
+  "step": 1,
+  "providers": [
+    "cloudflare"
+  ]
+}
+```
+
+Final sau cải tiến ghi nguyên văn:
+
+> Cloudflare **chưa được xác minh** do lỗi timeout trong quá trình truy cập. Không thể kết luận trạng thái hoạt động hoặc sự cố.
+
+Điểm H7 là 40 → 93 trong hai bộ đủ 22 case. Đoạn này thuộc full eval CP6,
+không phải focused check 95 điểm ở CP5. Tool timeout không được chuyển thành
+status operational; dữ liệu GitHub lấy được vẫn được báo kèm nguồn.
 
 ## 3. Thay đổi đã thực hiện
 
@@ -58,7 +81,7 @@ trạng thái khi tool lỗi; model đã làm theo yêu cầu bịa trong user m
 - Thu URL từ incident tool thành công. Final thiếu URL đã quan sát thì ghi
   `validation_missing_source`, yêu cầu model sửa trong budget; hết lượt trả `max_steps`.
   Kiểm tra URL token đầy đủ để không chấp nhận URL giả thêm suffix/query.
-- Toàn bộ **56/56 tests chính** và **3/3 tests tương thích bonus** pass; hai tests
+- Tại thời điểm CP5: **56/56 tests chính** và **3/3 tests tương thích bonus** pass; hai tests
   nguồn từng fail ở CP3 nay pass. Log: [reports/cp5_tests.txt](reports/cp5_tests.txt).
 - Giữ nguyên baseline, model, fixtures, dataset, adapter và grading. Manifest:
   [reports/cp5_manifest.json](reports/cp5_manifest.json).
@@ -128,7 +151,9 @@ Không cộng focused checks CP5 hoặc lượt CP6 bị ngắt vào usage hai b
 Lượt CP6 đầu bị dừng theo yêu cầu, sau đó tiến trình mất và không còn results
 trong bộ nhớ. Đã chạy lại đủ bộ từ E1, dùng nguyên hàm `run_case` và `summarize`
 qua harness lưu checkpoint. Không ghép điểm từ lượt ngắt hoặc sửa grading.
-Lượt thành công chạy một mạch đủ 22 case; 59/59 tests gồm 3 tests harness pass.
+Tại mốc CP6, lượt thành công chạy một mạch đủ 22 case; 59/59 tests gồm 3 tests harness pass.
+Sau khi thêm bonus, kiểm tra hiện tại là **61/61 tests chính + 22/22 tests bonus**;
+log mới: [main](reports/report_audit_main_tests.txt), [bonus](reports/report_audit_bonus_tests.txt).
 
 Bảng 22 case, phân tích chi tiết và manifest:
 [reports/CP6_REPORT.md](reports/CP6_REPORT.md),

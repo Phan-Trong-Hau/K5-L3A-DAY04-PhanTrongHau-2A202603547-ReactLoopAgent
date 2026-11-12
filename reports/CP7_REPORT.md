@@ -7,12 +7,15 @@ trực tiếp với trợ giảng hoặc nộp link lên LMS; CP7 chưa được
 
 - [x] Kiểm tra bốn file bắt buộc `agent.py`, hai eval JSON và `NOTES.md`.
 - [x] Hai bộ đủ đúng 22 case, không unscored, điểm tổng khác null và khớp case scores.
-- [x] Config hai bộ giống nhau; hashes code/tools/dữ liệu khớp bản CP6.
-- [x] `NOTES.md` đủ 5 mục; không sửa điểm eval hoặc code sau khi chấm.
+- [x] Config hai bộ core giống nhau; code core bỏ đúng block dispatcher bonus khớp
+  reference CP6. Code bonus khớp manifest eval bonus; không nói hash toàn agent.py còn như CP6.
+- [x] `NOTES.md` đủ 5 mục; không sửa điểm eval. Sau CP6 chỉ thêm dispatcher/phần bonus,
+  giữ nguyên logic core và bản code tham chiếu đã được đánh giá.
 - [x] Repo đúng tên L3A, thuộc `Phan-Trong-Hau`, public và trả HTTP 200 khi mở không đăng nhập.
 - [x] Không track `.env`; quét file tracked không khớp các mẫu credential phổ biến.
   Đây không phải bảo đảm tuyệt đối cho mọi loại secret hoặc mọi commit lịch sử.
-- [x] 59/59 unit tests chính pass; 3/3 tests tương thích bonus pass.
+- [x] Kiểm tra hiện tại: **61/61 tests chính + 22/22 tests bonus pass**.
+  Log 59+3 tại CP7 ban đầu được giữ riêng làm lịch sử, không dùng làm số kiểm tra mới.
 - [x] Chạy replay trace nhiều bước A8, lỗi/cải tiến H7 và regression H2 thành công.
 - [x] Soạn [DEMO.md](../DEMO.md), [REPORT.md](../REPORT.md) và công cụ kiểm tra bộ nộp.
 - [ ] Người học trình bày và giải thích code trực tiếp khi được yêu cầu.
@@ -20,7 +23,11 @@ trực tiếp với trợ giảng hoặc nộp link lên LMS; CP7 chưa được
 
 Bằng chứng kiểm tra tại [cp7_submission_checks.txt](cp7_submission_checks.txt),
 [cp7_tests.txt](cp7_tests.txt), [cp7_bonus_compatibility.txt](cp7_bonus_compatibility.txt).
-Lệnh kiểm tra độc lập: `python3 local/check_submission.py`.
+Các log `cp7_*` phía trên là kiểm tra lịch sử trước bonus. Kiểm tra mới:
+[report_audit_main_tests.txt](report_audit_main_tests.txt),
+[report_audit_bonus_tests.txt](report_audit_bonus_tests.txt),
+[report_audit_submission_checks.txt](report_audit_submission_checks.txt).
+Lệnh kiểm tra cả bộ: `python3 local/check_submission.py --bonus`.
 
 ## Demo đã chạy về kỹ thuật
 
@@ -43,6 +50,9 @@ bản kiểm tra vào main cho link repo mặc định. **PR #1 đã merge** t�
 `1a4a7ea`; đã truy cập public main không đăng nhập và kiểm tra file/hashes
 khớp bản đã eval. Branch được giữ lại để xem lịch sử CP1–CP7. Bằng chứng:
 [cp7_remote_verification.json](cp7_remote_verification.json).
+
+**Cập nhật bonus:** PR #2 đã merge tại `1da1845`; repo main có thêm code/report
+và `eval_bonus.json`. Tham chiếu audit mới: [REPORT_AUDIT.md](REPORT_AUDIT.md).
 
 Repo: https://github.com/Phan-Trong-Hau/K5-L3A-DAY04-PhanTrongHau-2A202603547-ReactLoopAgent
 PR: https://github.com/Phan-Trong-Hau/K5-L3A-DAY04-PhanTrongHau-2A202603547-ReactLoopAgent/pull/1

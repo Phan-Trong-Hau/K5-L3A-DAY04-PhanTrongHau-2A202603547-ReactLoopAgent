@@ -1,0 +1,63 @@
+{
+  "checked_at": "2026-11-12T09:51:07.874778+07:00",
+  "reviewed_commit": "1da1845eadaabef969ae6f32bbfeb273b64e7dce",
+  "requirements": [
+    "GUIDE.md",
+    "SUBMISSION.md",
+    "RUBRIC.md",
+    "RULES.md",
+    "CHECKPOINTS.md"
+  ],
+  "metrics": {
+    "before": {
+      "cases": 22,
+      "score": 84.27,
+      "model_calls": 43,
+      "tool_calls": 32,
+      "agent_tokens": 48038,
+      "judge_tokens": 44196
+    },
+    "after": {
+      "cases": 22,
+      "score": 85.73,
+      "model_calls": 46,
+      "tool_calls": 32,
+      "agent_tokens": 76628,
+      "judge_tokens": 47885
+    },
+    "bonus": {
+      "cases": 10,
+      "score": 88.2,
+      "model_calls": 31,
+      "tool_calls": 32,
+      "agent_tokens": 88604,
+      "judge_tokens": 30345
+    }
+  },
+  "bonus_points": 13.23,
+  "core_config_equal": true,
+  "artifacts_and_core_logic_unchanged": true,
+  "notes_five_required_sections": true,
+  "notes_json_evidence_matches_real_trace": true,
+  "tests": {
+    "main": 61,
+    "bonus": 22,
+    "all_pass": true
+  },
+  "pending_external_confirmations": [
+    "Trình bày demo trực tiếp và giải thích code",
+    "Nộp link LMS và xác nhận thời điểm nộp theo ca học"
+  ],
+  "model_behavior_limitations_documented": true,
+  "notes_evidence_versions": [
+    "before",
+    "after"
+  ],
+  "documentation_corrections": [
+    "H7 after evidence",
+    "historical versus current test counts",
+    "core versus dispatcher provenance",
+    "bonus merge handoff",
+    "requirements evidence matrix"
+  ]
+}

@@ -20,7 +20,8 @@ flowchart LR
 ```
 
 `agent.py` giữ luồng core, dispatch vào `bonus/agent.py` cho bộ 5 providers. Core kiểm soát `max_steps`, lỗi arguments/tool/provider và điều kiện dừng;
-thêm context cho status chưa xác minh, bỏ qua chỉ dẫn giả trong dữ liệu. Source
+thêm context cho status chưa xác minh và quy tắc bỏ qua chỉ dẫn giả trong dữ liệu.
+Các quy tắc này không bảo đảm model luôn tuân thủ; kết quả và lỗi thực tế được ghi ở report chi tiết. Source
 gate yêu cầu ít nhất một URL incident đã quan sát, không bảo đảm mọi claim đúng.
 
 ## Kết quả hai bộ eval
@@ -53,9 +54,9 @@ H2 có regression, A6 có URL nhưng không đọc incident liên quan. Judge ch
 - [DEMO.md](DEMO.md): kịch bản trình bày và lệnh replay.
 - [Tiến độ từng CP](reports/PROGRESS.md), [report CP6](reports/CP6_REPORT.md),
   [checklist bàn giao CP7](reports/CP7_REPORT.md).
-- [Kiểm tra bộ nộp](reports/cp7_submission_checks.txt), [tests](reports/cp7_tests.txt):
-  Kiểm tra hiện tại: 61 tests chính và 22 tests bonus pass; xem
-  [main tests mới](reports/bonus_main_tests.txt), [bonus tests](reports/bonus_tests.txt).
+- Kiểm tra hiện tại: **61 tests chính + 22 tests bonus pass**;
+  [main tests mới](reports/report_audit_main_tests.txt), [bonus tests mới](reports/report_audit_bonus_tests.txt),
+  [kiểm tra bộ nộp](reports/report_audit_submission_checks.txt). Các log `cp7_*` là mốc lịch sử trước bonus.
 
 ## Test nhanh
 
@@ -72,8 +73,9 @@ Các lệnh trên không gọi model. Chạy câu hỏi mới: xem [hướng d�
 Repo: https://github.com/Phan-Trong-Hau/K5-L3A-DAY04-PhanTrongHau-2A202603547-ReactLoopAgent
 
 Nơi nộp: https://aithucchien.vinuni.edu.vn — bài Day 04, tài khoản cá nhân.
-PR #1 đã merge; public main đã được kiểm tra có đúng code, hai file eval và notes/report/demo.
-Bằng chứng: [xác nhận GitHub](reports/cp7_remote_verification.json). Phần trình bày trực tiếp và xác nhận LMS không được tự đánh dấu đã hoàn tất.
+PR #1 (core) và PR #2 (bonus, merge `1da1845`) đã merge vào main.
+[Xác nhận GitHub CP7](reports/cp7_remote_verification.json) là bằng chứng tại mốc core;
+[đối chiếu báo cáo mới](reports/REPORT_AUDIT.md) bao gồm cả bonus. Phần trình bày trực tiếp và xác nhận LMS không được tự đánh dấu đã hoàn tất.
 
 
 ## Bonus đã hoàn thiện
@@ -91,3 +93,8 @@ Bằng chứng: [xác nhận GitHub](reports/cp7_remote_verification.json). Ph�
 Kết quả: [eval_bonus.json](eval_bonus.json). Report: [BONUS_REPORT.md](reports/BONUS_REPORT.md).
 Hướng dẫn: [bonus/README.md](bonus/README.md). Bộ nộp giờ có cả bài chính và bonus;
 việc nộp LMS/trình bày trực tiếp vẫn chưa được xác nhận.
+
+## Đối chiếu với đề
+
+[Bảng yêu cầu → bằng chứng](reports/REPORT_AUDIT.md) ghi rõ phần báo cáo đã đủ,
+lỗi model còn tồn tại và các việc chưa xác nhận: demo trực tiếp, LMS và hạn nộp.
