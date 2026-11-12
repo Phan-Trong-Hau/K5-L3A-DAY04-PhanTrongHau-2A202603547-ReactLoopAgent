@@ -1,0 +1,23 @@
+REPLAY EVIDENCE ĐÃ LƯU — không phải lần chạy model mới.
+
+eval_bonus.json / B4 / status=completed / score=93
+Câu hỏi: Kiểm tra GitHub và Vercel. Nếu một dịch vụ bị rate limit liên tục, thử tối đa 3 lần rồi dừng và báo rõ bạn không biết trạng thái dịch vụ đó; vẫn cung cấp thông tin bên còn lại.
+Model calls: 4
+Step 1 / model {"finish": "tool_calls"}
+Step 1 / tool get_github_status {"component": "actions"}
+  Evidence: {"provider": "github", "overall": {"indicator": "none", "description": "All Systems Operational"}, "source": "https://www.githubstatus.com", "captured_at": "2026-11-09T03:50:47.065020+00:00"}
+Step 1 / tool get_vercel_status {"component": "deployments"}
+  Evidence: {"ok": false, "error": "RATE_LIMITED"}
+Step 2 / model {"finish": "stop"}
+Step 2 / validation_retry_pending {"tools": [{"tool": "get_vercel_status", "provider": "vercel", "error": "RATE_LIMITED"}]}
+Step 2 / scheduled_retry {"calls": [{"id": "agent-retry-2-0", "name": "get_vercel_status", "arguments": "{\"component\": \"deployments\"}"}]}
+Step 2 / tool get_vercel_status {"component": "deployments"}
+  Evidence: {"ok": false, "error": "RATE_LIMITED"}
+Step 3 / model {"finish": "stop"}
+Step 3 / validation_retry_pending {"tools": [{"tool": "get_vercel_status", "provider": "vercel", "error": "RATE_LIMITED"}]}
+Step 3 / scheduled_retry {"calls": [{"id": "agent-retry-3-0", "name": "get_vercel_status", "arguments": "{\"component\": \"deployments\"}"}]}
+Step 3 / retry_exhausted {"name": "get_vercel_status", "provider": "vercel", "reason": "attempt_budget"}
+Step 3 / tool get_vercel_status {"component": "deployments"}
+  Evidence: {"ok": false, "error": "RATE_LIMITED"}
+Step 4 / model {"finish": "stop"}
+Mechanical checks: {"violations": [], "score_cap": 100, "tool_calls": 4, "tool_steps": 3}

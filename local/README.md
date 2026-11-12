@@ -52,7 +52,7 @@ không kiểm tra tình trạng thực tế hôm nay. Mở `reports/smoke_e2.jso
 kết quả eval một case, hoặc đọc `reports/SMOKE_REPORT.md`.
 
 Bản hiện tại sau CP5 đã có source gate và ngữ cảnh partial failure;
-59/59 tests chính pass, gồm 3 tests checkpoint và 2 tests `EvidenceGateTests` từng fail ở baseline.
+61/61 tests chính và 22/22 tests bonus pass; các kết quả core và code core được giữ qua archive/hash check.
 Xem [báo cáo CP5](../reports/CP5_REPORT.md) và [so sánh CP6](../reports/CP6_REPORT.md).
 Bộ test local endpoint chạy riêng bằng:
 
@@ -77,3 +77,16 @@ Không chạy hai lượt cùng ghi một checkpoint. Resume bị từ chối n�
 config hoặc ngày UTC thay đổi (agent có ngày chạy trong prompt). Case đang dở có
 thể phải chạy lại; case đã lưu không bị chạy lại. Default paths dành cho lượt CP6
 đã hoàn tất nên lệnh chạy mới không có paths riêng sẽ từ chối ghi đè.
+
+
+## Bonus hoàn tất
+
+```bash
+python3 local/try_agent.py --bonus 'Kiểm tra Vercel và npm'
+python3 local/demo.py --case B4 --version bonus --summary-only
+python3 local/check_submission.py --bonus
+```
+
+`eval_bonus.json` đủ 10 case: 88.2/100, bonus quy đổi 13.23/15 tham khảo. Xem
+[bonus/README.md](../bonus/README.md) và [report](../reports/BONUS_REPORT.md).
+Dispatcher bonus không thay logic core đã eval; bản gốc ở reports/reference/agent_cp6.py.

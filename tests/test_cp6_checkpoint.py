@@ -27,8 +27,8 @@ class CheckpointRunnerTests(unittest.TestCase):
         (root / 'evals/cases.json').write_text(json.dumps([{'id': 'E1'}, {'id': 'E2'}]))
         return config
 
-    def execute(self, root, responses, resume=False):
-        argv = ['run_checkpoint_evals.py'] + (['--resume'] if resume else [])
+    def execute(self, root, responses, resume=False, bonus=False):
+        argv = ['run_checkpoint_evals.py'] + (['--resume'] if resume else []) + (['--bonus'] if bonus else [])
         with patch.object(runner, 'ROOT', root), patch.object(sys, 'argv', argv), \
              patch.object(runner, 'run_case', side_effect=responses) as call, \
              patch.object(runner.urllib.request, 'urlopen',
@@ -80,3 +80,22 @@ class CheckpointRunnerTests(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 self.execute(root, [])
             self.assertEqual((root / 'reports/cp6_checkpoint.json').read_bytes(), saved)
+
+
+    def test_bonus_run_uses_full_dataset_and_standard_bonus_conversion(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.prepare(root)
+            (root / 'bonus/fixtures').mkdir(parents=True)
+            for name in ('bonus/agent.py', 'bonus/tools.py', 'bonus/fixtures/vercel.json'):
+                (root / name).write_text('unchanged')
+            (root / 'bonus/cases.json').write_text(json.dumps([{'id': f'B{i}'} for i in range(1, 11)]))
+            code, calls = self.execute(root, lambda case, args: self.item(case['id'], 80), bonus=True)
+            self.assertEqual(code, 0)
+            self.assertEqual(calls.call_count, 10)
+            report = json.loads((root / 'eval_bonus.json').read_text())
+            self.assertEqual(report['config']['dataset'], 'bonus')
+            self.assertEqual(report['config']['max_steps'], 16)
+            self.assertEqual(report['summary']['bonus_points_0_15'], 12)
+            self.assertTrue(calls.call_args.args[1].bonus)
+            self.assertEqual(len(json.loads((root / 'reports/bonus_checkpoint.json').read_text())['cases']), 10)

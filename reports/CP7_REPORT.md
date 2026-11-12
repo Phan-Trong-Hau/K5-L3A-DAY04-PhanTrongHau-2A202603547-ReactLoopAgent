@@ -48,7 +48,9 @@ Repo: https://github.com/Phan-Trong-Hau/K5-L3A-DAY04-PhanTrongHau-2A202603547-Re
 PR: https://github.com/Phan-Trong-Hau/K5-L3A-DAY04-PhanTrongHau-2A202603547-ReactLoopAgent/pull/1
 
 Bài chính tối đa 85 điểm theo rubric; eval 85.73/100 là thước đo agent, không phải
-điểm lab đã được giảng viên chấm. Bonus 15 điểm chưa làm bộ eval riêng.
+điểm lab đã được giảng viên chấm. Tại mốc CP7 ban đầu bonus chưa chạy. Cập nhật: đã đủ 10 case, 88.2/100
+→ 13.23/15 tham khảo, 61 tests chính + 22 tests bonus pass. Xem
+[BONUS_REPORT.md](BONUS_REPORT.md).
 
 ## Vì sao chưa đánh dấu nộp LMS?
 

@@ -3,8 +3,7 @@
 Học viên: **Phan Trọng Hậu** — MSSV **2A202603547**, lớp **L3A**.
 
 Bài chính đã có code, hai bộ eval đầy đủ, phân tích, tests và công cụ demo.
-**Chưa xác nhận trình bày trực tiếp hoặc nộp LMS.** Bonus 15 điểm là tùy chọn và
-chưa thực hiện bộ eval bonus; không coi điểm eval là điểm bài lab.
+**Chưa xác nhận trình bày trực tiếp hoặc nộp LMS.** Bonus đã chạy đủ 10 case; không coi điểm eval là điểm bài lab.
 
 ## Cách hoạt động
 
@@ -20,7 +19,7 @@ flowchart LR
     V -->|Đủ điều kiện| A[Answer + trace + usage]
 ```
 
-`agent.py` kiểm soát `max_steps`, lỗi arguments/tool/provider và điều kiện dừng;
+`agent.py` giữ luồng core, dispatch vào `bonus/agent.py` cho bộ 5 providers. Core kiểm soát `max_steps`, lỗi arguments/tool/provider và điều kiện dừng;
 thêm context cho status chưa xác minh, bỏ qua chỉ dẫn giả trong dữ liệu. Source
 gate yêu cầu ít nhất một URL incident đã quan sát, không bảo đảm mọi claim đúng.
 
@@ -47,19 +46,21 @@ H2 có regression, A6 có URL nhưng không đọc incident liên quan. Judge ch
 
 ## Bộ nộp và bằng chứng
 
-- [agent.py](agent.py): agent loop sau cải tiến, khớp hash bản đã eval.
+- [agent.py](agent.py): core + dispatcher bonus; core bỏ dispatcher khớp hash CP6,
+  lưu nguyên bản tại [reference](reports/reference/agent_cp6.py).
 - [eval_before.json](eval_before.json), [eval_after.json](eval_after.json): 22 case mỗi bộ, điểm tổng khác null.
 - [NOTES.md](NOTES.md): đủ 5 mục phân tích dựa trên trace thật.
 - [DEMO.md](DEMO.md): kịch bản trình bày và lệnh replay.
 - [Tiến độ từng CP](reports/PROGRESS.md), [report CP6](reports/CP6_REPORT.md),
   [checklist bàn giao CP7](reports/CP7_REPORT.md).
 - [Kiểm tra bộ nộp](reports/cp7_submission_checks.txt), [tests](reports/cp7_tests.txt):
-  59 tests chính pass; 3 tests tương thích bonus pass, không phải điểm bonus.
+  Kiểm tra hiện tại: 61 tests chính và 22 tests bonus pass; xem
+  [main tests mới](reports/bonus_main_tests.txt), [bonus tests](reports/bonus_tests.txt).
 
 ## Test nhanh
 
 ```bash
-python3 local/check_submission.py
+python3 local/check_submission.py --bonus
 python3 local/demo.py --case A8 --version after --summary-only
 python3 local/demo.py --case H7 --version both
 ```
@@ -73,3 +74,20 @@ Repo: https://github.com/Phan-Trong-Hau/K5-L3A-DAY04-PhanTrongHau-2A202603547-Re
 Nơi nộp: https://aithucchien.vinuni.edu.vn — bài Day 04, tài khoản cá nhân.
 PR #1 đã merge; public main đã được kiểm tra có đúng code, hai file eval và notes/report/demo.
 Bằng chứng: [xác nhận GitHub](reports/cp7_remote_verification.json). Phần trình bày trực tiếp và xác nhận LMS không được tự đánh dấu đã hoàn tất.
+
+
+## Bonus đã hoàn thiện
+
+- **10/10 case scored**, không unscored hoặc mechanical violations.
+- Điểm eval **88.2/100**, quy đổi tham khảo **13.23/15** bằng grader gốc.
+- Snapshot 5 providers; cùng model local, max_steps=16. 31 model calls, 32 tool
+  executions; 118,949 token agent + judge cho lượt cuối.
+- Có bounded retry/Retry-After, scheduled recovery, lookup theo yêu cầu, pagination,
+  lọc context không liên quan và guard ngoài registry. Không sửa grading/fixtures.
+- Vẫn có lỗi nội dung model và judge; đặc biệt B10 sai target URL DigitalOcean,
+  diễn giải status Cloudflare và thiếu timestamp. Không cộng điểm eval core với
+  bonus để tự suy điểm lab.
+
+Kết quả: [eval_bonus.json](eval_bonus.json). Report: [BONUS_REPORT.md](reports/BONUS_REPORT.md).
+Hướng dẫn: [bonus/README.md](bonus/README.md). Bộ nộp giờ có cả bài chính và bonus;
+việc nộp LMS/trình bày trực tiếp vẫn chưa được xác nhận.

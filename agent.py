@@ -59,6 +59,12 @@ def _status_scope(name, arguments, schemas):
 
 def run_agent(question, provider, tools, max_steps=6):
     """Run the model/tool loop; one step means one provider request."""
+    # BEGIN BONUS DISPATCH
+    schemas = getattr(tools, 'schemas', ())
+    if sum(s['function']['name'].endswith('_status') for s in schemas) > 1:
+        from bonus.agent import run_bonus_agent
+        return run_bonus_agent(question, provider, tools, max_steps)
+    # END BONUS DISPATCH
     messages = [
         {'role': 'system', 'content': (
             getattr(tools, 'system_prompt', SYSTEM_PROMPT) + '\n\n' + EVIDENCE_POLICY

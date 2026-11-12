@@ -14,9 +14,11 @@ def main():
     parser = argparse.ArgumentParser(description='Thử Status Agent bằng Ollama local')
     parser.add_argument('question', nargs='?', help='Bỏ trống để nhập câu hỏi trong terminal')
     parser.add_argument('--mode', choices=['snapshot', 'live'], default='snapshot')
-    parser.add_argument('--max-steps', type=int, default=6)
+    parser.add_argument('--bonus', action='store_true', help='Dùng 5 providers và tools bonus')
+    parser.add_argument('--max-steps', type=int, default=None)
     parser.add_argument('--output', type=Path, help='Lưu toàn bộ answer, trace và usage thành JSON')
     args = parser.parse_args()
+    args.max_steps = args.max_steps if args.max_steps is not None else (16 if args.bonus else 6)
     if args.max_steps < 1:
         parser.error('--max-steps phải >= 1')
     try:
@@ -32,7 +34,7 @@ def main():
         os.environ.setdefault(name, value)
     print('Đang gọi model local; có thể mất vài phút...', flush=True)
     try:
-        result = run(question, args.mode, 'openai', os.getenv('MODEL', 'status-agent-local'), args.max_steps)
+        result = run(question, args.mode, 'openai', os.getenv('MODEL', 'status-agent-local'), args.max_steps, bonus=args.bonus)
     except (ValueError, RuntimeError, OSError) as exc:
         print(f'Lỗi: {exc}', file=sys.stderr)
         return 1

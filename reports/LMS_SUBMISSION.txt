@@ -5,3 +5,6 @@ Bài chính: agent Python tự viết, model local Ollama Qwen3 4B.
 Hai bộ eval đủ 22 case: 84.27 → 85.73/100; H7: 40 → 93.
 Code, eval_before.json, eval_after.json, NOTES.md và hướng dẫn demo có trong repo.
 Điểm eval là tham khảo, không phải điểm lab được giảng viên chấm.
+
+Bonus: đủ 10 case, 88.2/100 → 13.23/15 tham khảo; có eval_bonus.json và report bonus.
+Điểm lab cuối cùng do giảng viên đánh giá theo rubric, không cộng trực tiếp các điểm eval.

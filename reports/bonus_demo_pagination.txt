@@ -1,0 +1,20 @@
+REPLAY EVIDENCE ĐÃ LƯU — không phải lần chạy model mới.
+
+eval_bonus.json / B2 / status=completed / score=90
+Câu hỏi: Tra timeline Vercel incident sps6n39gm4sg: thông báo nào nói các build GitHub-connected vẫn lỗi do upstream? Theo dữ liệu bạn đọc, có thể xác nhận sự cố đó đang xảy ra không? Dẫn nguồn.
+Model calls: 6
+Step 1 / model {"finish": "tool_calls"}
+Step 1 / tool get_incident_details {"provider": "vercel", "incident_id": "sps6n39gm4sg", "offset": 0, "limit": 3}
+  Evidence: {"provider": "vercel", "ok": true, "id": "sps6n39gm4sg", "status": "resolved", "url": "https://stspg.io/cfrfjg8fqxfr", "captured_at": "2026-11-10T14:45:50.457875+00:00"}
+Step 2 / model {"finish": "stop"}
+Step 2 / validation_incomplete_timeline {"next_calls": [{"provider": "vercel", "incident_id": "sps6n39gm4sg", "offset": 3, "limit": 3}]}
+Step 3 / model {"finish": "tool_calls"}
+Step 3 / tool get_incident_details {"provider": "vercel", "incident_id": "sps6n39gm4sg", "offset": 3, "limit": 3}
+  Evidence: {"provider": "vercel", "ok": true, "id": "sps6n39gm4sg", "status": "resolved", "url": "https://stspg.io/cfrfjg8fqxfr", "captured_at": "2026-11-10T14:45:50.457875+00:00"}
+Step 4 / model {"finish": "stop"}
+Step 4 / validation_incomplete_timeline {"next_calls": [{"provider": "vercel", "incident_id": "sps6n39gm4sg", "offset": 6, "limit": 3}]}
+Step 5 / model {"finish": "tool_calls"}
+Step 5 / tool get_incident_details {"provider": "vercel", "incident_id": "sps6n39gm4sg", "offset": 6, "limit": 3}
+  Evidence: {"provider": "vercel", "ok": true, "id": "sps6n39gm4sg", "status": "resolved", "url": "https://stspg.io/cfrfjg8fqxfr", "captured_at": "2026-11-10T14:45:50.457875+00:00"}
+Step 6 / model {"finish": "stop"}
+Mechanical checks: {"violations": [], "score_cap": 100, "tool_calls": 3, "tool_steps": 3}
